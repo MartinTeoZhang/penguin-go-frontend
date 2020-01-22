@@ -10,8 +10,8 @@
 <script>
 // axios 是一个基于 Promise 用于浏览器和 nodejs 的 HTTP 客户端，我们后续需要用来发送 http 请求。
 import axios from 'axios'
-require('../mock/mock.js')
-// import mock from '@/mock/mock.js'
+// require('../mock/mock.js')
+import mock from '@/mock/index.js';
 
 export default {
   name: 'Home',
