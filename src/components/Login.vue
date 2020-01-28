@@ -15,7 +15,10 @@
     name: 'Login',
     methods: {
       login() {
-        this.$api.login().then(function(res) {
+        // 在vue中使用axios做网络请求的时候，会遇到this不指向vue，而为undefined。
+        // 使用箭头函数替代普通函数，ES6中的箭头函数 “=>” 内部的 this 属于词法作用域，
+        // 由上下文确定（也就是由外层调用者vue来确定）。
+        this.$api.login().then((res) => {
           console.log(res)
           alert(res.data.token)
           Cookies.set('token', res.data.token) // 放置token到Cookie
