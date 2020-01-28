@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "axios": "^0.19.1",
+    "element-theme": "^2.0.1",
     "element-ui": "^2.13.0",
     "font-awesome": "^4.7.0",
     "js-cookie": "^2.2.1",
@@ -45,6 +46,7 @@
     "copy-webpack-plugin": "^4.0.1",
     "cross-spawn": "^5.0.1",
     "css-loader": "^0.28.0",
+    "element-theme-chalk": "^2.13.0",
     "eslint-config-standard": "^10.2.1",
     "eslint-friendly-formatter": "^3.0.0",
     "eslint-loader": "^1.7.1",

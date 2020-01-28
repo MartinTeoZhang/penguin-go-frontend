@@ -21,6 +21,9 @@
         </div>
       </el-col>
       <el-col :span="6" class="userinfo">
+        <span class="el-dropdown-link">
+          <ThemePicker></ThemePicker>
+        </span>
         <el-dropdown @command="handleCommand">
           <span class="el-dropdown-link lang-inner">
             <span id="language">中文</span><i class="el-icon-arrow-down el-icon--right"></i>
@@ -95,8 +98,13 @@
 
 <script>
   import mock from "@/mock/index.js";
+  import ThemePicker from "@/components/ThemePicker"
+
   export default {
     name: "Home",
+    components: {
+      ThemePicker
+    },
     data() {
       return {
         isCollapse: false,
