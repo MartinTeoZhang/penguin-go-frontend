@@ -1,11 +1,12 @@
 // login.js：登录相关的接口模拟
 
 // 登录接口
+// 把请求类型改为 post。
 export function login () {
   return {
     // isOpen: false,
     url: 'http://localhost:8080/login',
-    type: 'get',
+    type: 'post',
     data: {
       'msg': 'success',
       'code': 0,

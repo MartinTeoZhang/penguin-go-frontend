@@ -1,34 +1,60 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
-import Login from '@/components/Login'
-import Home from '@/components/Home'
-import NotFound from '@/components/404'
+import Login from '@/views/Login'
+import NotFound from '@/views/404'
+import Home from '@/views/Home'
+import Main from '@/views/Main'
+import User from '@/views/User'
+import Menu from '@/views/Menu'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     { // 添加首页路由
       path: '/',
-      name: 'Home',
-      component: Home
+      name: '首页',
+      component: Home,
+      children: [
+        { path: '/main', component: Main, name: '系统介绍' },
+        { path: '/user', component: User, name: '用户管理' },
+        { path: '/menu', component: Menu, name: '菜单管理' }
+      ]
     },
     { // 添加登录页路由
       path: '/login',
-      name: 'Login',
+      name: '登录',
       component: Login
     },
     { // 添加404页路由
       path: '/404',
       name: 'notFound',
       component: NotFound
-    },
-    {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
     }
   ]
 
 })
+
+// 添加导航守卫，根据用户登录会话记录，路由到主页或登录界面
+router.beforeEach((to, from, next) => {
+  // 登录界面登录成功之后，会把用户信息保存在会话
+  // 存在时间为会话生命周期，页面关闭即失效。
+  let user = sessionStorage.getItem('user');
+  if (to.path == '/login') {
+    // 如果是访问登录界面，如果用户会话信息存在，代表已登录过，跳转到主页
+    if(user) {
+      next({ path: '/' })
+    } else {
+      next()
+    }
+  } else {
+    // 如果访问非登录界面，且户会话信息不存在，代表未登录，则跳转到登录界面
+    if (!user) {
+      next({ path: '/login' })
+    } else {
+      next()
+    }
+  }
+})
+
+export default router

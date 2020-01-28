@@ -7,10 +7,12 @@ import axios from './axios'
  */
 
 // 单独导出
-export const login = () => {
+// 把请求类型改为 post，并传入 data 参数
+export const login = data => {
   return axios({
     url: '/login',
-    method: 'get'
+    method: 'post',
+    data
   })
 }
 
