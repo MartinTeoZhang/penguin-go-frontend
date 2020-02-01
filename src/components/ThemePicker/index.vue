@@ -57,6 +57,11 @@
           if (typeof innerText !== 'string') return
           style.innerText = this.updateStyle(innerText, originalCluster, themeCluster)
         })
+
+        // 响应外部操作
+        this.$emit('onThemeChange', val, oldVal)
+        // 把变更的新旧主题色导出来，并且绑定函数，这样在父组件就可以获取主题颜色更新其他组建了
+
         this.$message({
           message: '换肤成功',
           type: 'success'
@@ -135,7 +140,6 @@
 
 <style>
   .theme-picker .el-color-picker__trigger {
-    vertical-align: middle;
   }
 
   .theme-picker-dropdown .el-color-dropdown__link-btn {

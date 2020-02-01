@@ -1,12 +1,14 @@
 <!-- 导航菜单栏 -->
 <template>
+  <!-- 导航宽度样式 -->
   <div class="menu-bar-container">
     <!-- logo -->
-    <div class="logo" :class="isCollapse?'menu-bar-collapse-width':'menu-bar-width'">
-      <img :src="this.logo" /> <div>{{isCollapse?'':sysName}}</div>
+    <div class="logo" :style="{'background-color':themeColor}" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'">
+      <img src="@/assets/logo.png" /> <div>{{collapse?'':appName}}</div>
     </div>
-    <!-- 导航菜单 -->
-    <el-menu default-active="1-1" :class="isCollapse?'menu-bar-collapse-width':'menu-bar-width'" @open="handleopen" @close="handleclose" @select="handleselect" :collapse="isCollapse">
+    <!-- 导航菜单，菜单收缩状态绑定 -->
+    <el-menu default-active="1-1" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'"
+             :collapse="collapse" @open="handleopen" @close="handleclose" @select="handleselect">
       <el-submenu index="1">
         <template slot="title">
           <i class="el-icon-location"></i>
@@ -30,19 +32,17 @@
       </el-menu-item>
       <el-menu-item index="4">
         <i class="el-icon-setting"></i>
-        <span slot="title">{{$t("sys.nv4")}}</span>
+        <span slot="title">{{$t("sys.nav4")}}</span>
       </el-menu-item>
     </el-menu>
   </div>
 </template>
 
 <script>
+  import { mapState } from 'vuex'
   export default {
     data() {
       return {
-        isCollapse: false,
-        sysName: "",
-        logo: "",
       };
     },
     methods: {
@@ -56,9 +56,15 @@
         console.log('handleselect');
       }
     },
-    mounted() {
-      this.sysName = "主被试助手";
-      this.logo = require("@/assets/logo.png");
+    computed: {
+      // 如果一个文件内引用过多，嫌引用路劲又长又臭，
+      // 可以使用 mapState、mapGetter、mapActions 工具进行简化。
+      // 如下，我们用 mapState 简化对属性的引用，给状态赋予别名。
+      ...mapState({
+        appName: state => state.app.appName,
+        themeColor: state => state.app.themeColor,
+        collapse: state => state.app.collapse
+      })
     }
   };
 </script>
@@ -94,7 +100,7 @@
       width: 200px;
     }
     .menu-bar-collapse-width {
-      width: 65px;
+      width: 60px;
     }
   }
 </style>
