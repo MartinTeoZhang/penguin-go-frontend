@@ -1,7 +1,7 @@
 <!-- 主内容区域 -->
 <template>
   <div class="container" :class="$store.state.app.collapse?'menu-bar-collapse-width':'menu-bar-width'">
-    <BreadCrumb></BreadCrumb>
+    <bread-crumb></bread-crumb>
     <transition name="fade" mode="out-in">
       <router-view></router-view>
     </transition>
