@@ -2,7 +2,7 @@
   <div class="container" :style="{'background':themeColor}" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'">
     <!-- 导航菜单隐藏显示切换 -->
     <span class="hamburger-container" :style="{'background':themeColor}">
-      <Hamburger :onClick="onCollapse" :isActive="collapse"></Hamburger>
+      <hamburger :onClick="onCollapse" :isActive="collapse"></hamburger>
     </span>
 <!--    <span class="collapse-switcher" @click.prevent="collapse">-->
 <!--      <i class="el-icon-menu"></i>-->
@@ -18,9 +18,9 @@
     </span>
     <span class="tool-bar">
       <!-- 主题切换 -->
-      <ThemePicker class="theme-picker" @onThemeChange="onThemeChange"></ThemePicker>
+      <theme-picker class="theme-picker" @onThemeChange="onThemeChange"></theme-picker>
       <!-- 语言切换 -->
-      <LangSelector class="lang-selector"></LangSelector>
+      <lang-selector class="lang-selector"></lang-selector>
       <!-- 用户信息 -->
       <el-dropdown class="user-info-dropdown" trigger="hover">
         <span class="el-dropdown-link"><img :src="this.userAvatar" /> {{username}}</span>
@@ -36,7 +36,7 @@
 
 <script>
   import { mapState } from 'vuex'
-  import mock from "@/mock/index.js";
+  import mock from "@/mock/index";
   import Hamburger from "@/components/Hamburger"
   import ThemePicker from "@/components/ThemePicker"
   import LangSelector from "@/components/LangSelector"
@@ -70,14 +70,12 @@
       },
       //退出登录
       logout: function() {
-        var _this = this;
         this.$confirm("确认退出吗?", "提示", {
           type: "warning"
         })
           .then(() => {
             sessionStorage.removeItem("user");
-            this.$router.push
-            ("/login");
+            this.$router.push("/login");
           })
           .catch(() => {});
       }
