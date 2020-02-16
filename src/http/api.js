@@ -3,6 +3,7 @@
  */
 import * as login from './modules/login'
 import * as user from './modules/user'
+import * as dept from './modules/dept'
 import * as menu from './modules/menu'
 
 
@@ -10,5 +11,6 @@ import * as menu from './modules/menu'
 export default {
   login,
   user,
+  dept,
   menu
 }

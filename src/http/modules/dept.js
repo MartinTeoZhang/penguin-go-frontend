@@ -1,5 +1,5 @@
 /*
- * 用户管理模块
+ * 机构管理模块
  */
 
 import axios from '../axios'
@@ -7,26 +7,23 @@ import axios from '../axios'
 // 保存
 export const save = (data) => {
   return axios({
-    url: '/user/save',
+    url: '/dept/save',
     method: 'post',
     data
   })
 }
-
 // 删除
 export const batchDelete = (data) => {
   return axios({
-    url: '/user/delete',
+    url: '/dept/delete',
     method: 'post',
     data
   })
 }
-
-// 分页查询
-export const findPage = (data) => {
+// 查询机构树
+export const findDeptTree = () => {
   return axios({
-    url: '/user/findPage',
-    method: 'post',
-    data
+    url: '/dept/findTree',
+    method: 'get'
   })
 }

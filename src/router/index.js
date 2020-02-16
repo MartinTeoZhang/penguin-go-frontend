@@ -66,8 +66,8 @@ function addDynamicMenuAndRoutes() {
     console.log('动态菜单和路由已经存在.')
     return
   }
-  api.menu.findMenuTree()
-    .then( (res) => {
+  api.menu.findNavTree({'username':''})
+    .then(res => {
       // 添加动态路由
       let dynamicRoutes = addDynamicRoutes(res.data)
       router.options.routes[0].children = router.options.routes[0].children.concat(dynamicRoutes)
@@ -75,7 +75,12 @@ function addDynamicMenuAndRoutes() {
       // 保存加载状态
       store.commit('menuRouteLoaded', true)
       // 保存菜单树
-      store.commit('setMenuTree', res.data)
+      store.commit('setNavTree', res.data)
+    }).then(res => {
+      api.user.findPermissions({'name': userName}).then(res => {
+        // 保存用户权限标识集合
+        store.commit('setPerms', res.data)
+      })
     })
     .catch(function(res) {
       alert(res);

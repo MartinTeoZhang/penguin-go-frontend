@@ -1,7 +1,7 @@
 // menu.js：菜单相关的接口模拟
 
 // 获取菜单树
-const menuTreeData = {
+const navTreeData = {
   "code": 200,
   "msg": null,
   "data": [
@@ -221,8 +221,8 @@ const menuTreeData = {
 
 export function findTree() {
   return {
-    url: 'http://localhost:8080/menu/findTree',
+    url: 'findTree',
     type: 'get',
-    data: menuTreeData
+    data: navTreeData
   }
 }

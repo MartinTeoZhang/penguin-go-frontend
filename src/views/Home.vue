@@ -30,6 +30,5 @@
     top: 0px;
     left: 0px;
     right: 0px;
-    background: #409EFF;
   }
 </style>
