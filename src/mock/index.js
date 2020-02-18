@@ -16,7 +16,7 @@ let openMock = true
 
 fnCreate(login, openMock)
 fnCreate(user, openMock)
-fnCreate(dept, openMock)
+fnCreate(dept, openMock) // false
 fnCreate(menu, openMock)
 
 // index.js：模拟接口模块聚合文件
@@ -36,8 +36,8 @@ function fnCreate (mod, isOpen = true) {
             opts['data'] = opts.body ? JSON.parse(opts.body) : null
             delete opts.body
             console.log('\n')
-            console.log('%cmock拦截, 请求: ', 'color:blue', opts)
-            console.log('%cmock拦截, 响应: ', 'color:blue', res.data)
+            console.log('%cmock拦截, 请求: ', 'color:yellow', opts)
+            console.log('%cmock拦截, 响应: ', 'color:yellow', res.data)
             return res.data
           })
         }

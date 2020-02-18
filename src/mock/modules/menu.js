@@ -6,7 +6,7 @@ const navTreeData = {
   "msg": null,
   "data": [
     {
-      "menuId": 1,
+      "id": 1,
       "parentId": 0,
       "name": "系统管理",
       "url": null,
@@ -21,7 +21,7 @@ const navTreeData = {
       "delFlag": 0,
       "children": [
         {
-          "menuId": 2,
+          "id": 2,
           "parentId": 1,
           "name": "用户管理",
           "url": "/sys/user",
@@ -37,7 +37,7 @@ const navTreeData = {
           "children": []
         },
         {
-          "menuId": 3,
+          "id": 3,
           "parentId": 1,
           "name": "机构管理",
           "url": "/sys/dept",
@@ -53,7 +53,7 @@ const navTreeData = {
           "children": []
         },
         {
-          "menuId": 4,
+          "id": 4,
           "parentId": 1,
           "name": "角色管理",
           "url": "/sys/role",
@@ -69,7 +69,7 @@ const navTreeData = {
           "children": []
         },
         {
-          "menuId": 5,
+          "id": 5,
           "parentId": 1,
           "name": "菜单管理",
           "url": "/sys/menu",
@@ -85,7 +85,7 @@ const navTreeData = {
           "children": []
         },
         {
-          "menuId": 6,
+          "id": 6,
           "parentId": 1,
           "name": "SQL监控",
           "url": "/druid/sql",
@@ -101,7 +101,7 @@ const navTreeData = {
           "children": []
         },
         {
-          "menuId": 8,
+          "id": 8,
           "parentId": 1,
           "name": "系统日志",
           "url": "/sys/log",
@@ -119,7 +119,7 @@ const navTreeData = {
       ]
     },
     {
-      "menuId": 25,
+      "id": 25,
       "parentId": 0,
       "name": "内容管理",
       "url": null,
@@ -134,7 +134,7 @@ const navTreeData = {
       "delFlag": 0,
       "children": [
         {
-          "menuId": 26,
+          "id": 26,
           "parentId": 25,
           "name": "栏目管理",
           "url": "/content/category",
@@ -150,7 +150,7 @@ const navTreeData = {
           "children": []
         },
         {
-          "menuId": 27,
+          "id": 27,
           "parentId": 25,
           "name": "文章管理",
           "url": "/content/artical",
@@ -168,7 +168,7 @@ const navTreeData = {
       ]
     },
     {
-      "menuId": 28,
+      "id": 28,
       "parentId": 0,
       "name": "使用案例",
       "url": null,
@@ -183,7 +183,7 @@ const navTreeData = {
       "delFlag": 0,
       "children": [
         {
-          "menuId": 29,
+          "id": 29,
           "parentId": 28,
           "name": "国际化",
           "url": "/demo/i18n",
@@ -199,7 +199,7 @@ const navTreeData = {
           "children": []
         },
         {
-          "menuId": 30,
+          "id": 30,
           "parentId": 28,
           "name": "换皮肤",
           "url": "/demo/theme",

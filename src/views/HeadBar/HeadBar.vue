@@ -23,7 +23,7 @@
       <lang-selector class="lang-selector"></lang-selector>
       <!-- 用户信息 -->
       <el-dropdown class="user-info-dropdown" trigger="hover">
-        <span class="el-dropdown-link"><img :src="this.userAvatar" /> {{username}}</span>
+        <span class="el-dropdown-link"><img :src="this.userAvatar" /> {{userName}}</span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>{{$t("common.myMsg")}}</el-dropdown-item>
           <el-dropdown-item>{{$t("common.config")}}</el-dropdown-item>
@@ -49,7 +49,7 @@
     },
     data() {
       return {
-        username: "Ryzin",
+        userName: "Ryzin",
         userAvatar: "",
         activeIndex: '1'
       };
@@ -76,6 +76,10 @@
           .then(() => {
             sessionStorage.removeItem("user");
             this.$router.push("/login");
+            this.$api.login.logout().then((res) => {
+            }).catch(function(res) {
+              alert(res);
+            });
           })
           .catch(() => {});
       }
@@ -115,7 +119,7 @@
       margin-left: auto;
       float: left;
       .el-menu {
-        background: #409EFF
+        background: #409EFF80
       }
     }
     .tool-bar {
