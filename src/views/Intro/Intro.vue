@@ -12,7 +12,7 @@
               <li>旨在提供一套简洁易用的解决方案，帮助用户有效降低项目开发难度和成本。</li>
               <li>博客提供项目开发过程同步系列教程文章，手把手的教你如何开发同类系统。</li>
             </ul>
-            <div><img src="@/assets/logo.png" style="width:200px;height:120px;padding-top:15px;" /></div>
+            <div><img src="@/assets/logo-full.png" style="width:130px;height:130px;padding-top:10px;padding-bottom:10px;" /></div>
           </el-carousel-item>
           <el-carousel-item class="carousel-item-func">
             <h2>功能计划</h2>
