@@ -1,4 +1,5 @@
 // user.js：用户相关的接口模拟
+
 /*
 * 用户管理模块
 */
@@ -30,12 +31,12 @@ export function batchDelete() {
 }
 
 // 分页查询
-let findPageData = {
-  "code": 200,
-  "msg": null,
-  "data": {}
-}
 export function findPage(params) {
+  let findPageData = {
+    "code": 200,
+    "msg": null,
+    "data": {}
+  }
   let pageNum = 1
   let pageSize = 8
   if(params !== null) {
@@ -69,10 +70,15 @@ export function getContent(pageNum, pageSize) {
     obj.status = 1
     obj.deptId = 12
     obj.deptName = '技术部'
+    obj.status = 1
     if(i % 2 === 0) {
       obj.deptId = 13
       obj.deptName = '市场部'
     }
+    obj.createBy= 'admin'
+    obj.createTime= '2018-08-14 11:11:11'
+    obj.createBy= 'admin'
+    obj.createTime= '2018-09-14 12:12:12'
     content.push(obj)
   }
   return content
@@ -88,12 +94,15 @@ export function findPermissions() {
       "sys:user:view",
       "sys:menu:delete",
       "sys:dept:edit",
+      "sys:dict:edit",
+      "sys:dict:delete",
       "sys:menu:add",
       "sys:user:add",
       "sys:log:view",
       "sys:dept:delete",
       "sys:role:edit",
       "sys:role:view",
+      "sys:dict:view",
       "sys:user:edit",
       "sys:user:delete",
       "sys:dept:view",
@@ -101,6 +110,7 @@ export function findPermissions() {
       "sys:role:delete",
       "sys:menu:view",
       "sys:menu:edit",
+      "sys:dict:add",
       "sys:role:add"
     ]
   }

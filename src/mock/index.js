@@ -5,8 +5,11 @@
 import Mock from 'mockjs'
 import * as login from './modules/login'
 import * as user from './modules/user'
+import * as role from './modules/role'
 import * as dept from './modules/dept'
 import * as menu from './modules/menu'
+import * as dict from './modules/dict'
+import * as log from './modules/log'
 
 // 1. 开启/关闭[所有模块]拦截, 通过调[openMock参数]设置.
 // 2. 开启/关闭[业务模块]拦截, 通过调用fnCreate方法[isOpen参数]设置.
@@ -16,8 +19,11 @@ let openMock = true
 
 fnCreate(login, openMock)
 fnCreate(user, openMock)
-fnCreate(dept, openMock) // false
+fnCreate(role, openMock)
+fnCreate(dept, openMock)
 fnCreate(menu, openMock)
+fnCreate(dict, openMock)
+fnCreate(log, openMock)
 
 // index.js：模拟接口模块聚合文件
 /**
