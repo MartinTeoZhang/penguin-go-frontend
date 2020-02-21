@@ -3,6 +3,7 @@
 // 我们对 mock 模块进行了封装，可以方便的定制模拟接口的统一开关和个体开关。
 
 import Mock from 'mockjs'
+import * as global from '@/utils/global'
 import * as login from './modules/login'
 import * as user from './modules/user'
 import * as role from './modules/role'
@@ -11,6 +12,7 @@ import * as menu from './modules/menu'
 import * as dict from './modules/dict'
 import * as log from './modules/log'
 
+let baseUrl = global.baseURL
 // 1. 开启/关闭[所有模块]拦截, 通过调[openMock参数]设置.
 // 2. 开启/关闭[业务模块]拦截, 通过调用fnCreate方法[isOpen参数]设置.
 // 3. 开启/关闭[业务模块中某个请求]拦截, 通过函数返回对象中的[isOpen属性]设置.
@@ -36,10 +38,9 @@ function fnCreate (mod, isOpen = true) {
     for (var key in mod) {
       ((res) => {
         if (res.isOpen !== false) {
-          let baseUrl = 'http://localhost:8088/' // 把mock的根路径提取出来
           let url = baseUrl + res.url
-          // Mock.mock(new RegExp(url), res.type, (opts) => { // openMock == false
-          Mock.mock(new RegExp(baseUrl), res.type, (opts) => { // openMock == true
+          Mock.mock(new RegExp(url), res.type, (opts) => { // openMock == false
+          // Mock.mock(new RegExp(baseUrl), res.type, (opts) => { // openMock == true
             opts['data'] = opts.body ? JSON.parse(opts.body) : null
             delete opts.body
             console.log('\n')
