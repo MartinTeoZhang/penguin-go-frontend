@@ -1,7 +1,13 @@
 <template>
 <!--  放置一个登录界面表单，包含账号密码输入框和登录重置按钮。-->
   <el-form :model="loginForm" :rules="fieldRules" ref="loginForm" label-position="left" label-width="0px" class="demo-ruleForm login-container">
-    <h3 class="title">账号登录</h3>
+    <span class="tool-bar">
+      <!-- 主题切换 -->
+      <theme-picker style="float:right;" class="theme-picker" :default="themeColor" @onThemeChange="onThemeChange"></theme-picker>
+          <!-- 语言切换 -->
+          <!-- <lang-selector class="lang-selector"></lang-selector>    -->
+    </span>
+    <h2 class="title" style="padding-left:22px;" >系统登录</h2>
     <el-form-item prop="account">
       <el-input type="text" v-model="loginForm.account" auto-complete="off" placeholder="账号"></el-input>
     </el-form-item>
@@ -17,17 +23,23 @@
 </template>
 
 <script>
-  import Cookies from "js-cookie";
-
+  import { mapState } from 'vuex'
+  import Cookies from "js-cookie"
+  import ThemePicker from "@/components/ThemePicker"
+  import LangSelector from "@/components/LangSelector"
   export default {
     name: 'Login',
+    components:{
+      ThemePicker,
+      LangSelector
+    },
     data() {
       return {
         logining: false,
         loginForm: {
           account: 'admin',
           password: 'admin'
-        },
+      },
         fieldRules: {
           account: [
             { required: true, message: '请输入账号', trigger: 'blur' },
@@ -37,11 +49,9 @@
           ]
         },
         checked: true
-      };
+      }
     },
     methods: {
-      // 添加页面组件显示规则和操作响应，其中登录成功后，
-      // 把登录用户信息存储到本地会话，用于配置路由跳转目标。
       login() {
         let userInfo = {account:this.loginForm.account, password:this.loginForm.password}
         this.$api.login.login(userInfo).then((res) => {
@@ -64,8 +74,17 @@
         });
       },
       reset() {
-        this.$refs.loginForm.resetFields();
+        this.$refs.loginForm.resetFields()
+      },
+      // 切换主题
+      onThemeChange: function(themeColor) {
+        this.$store.commit('setThemeColor', themeColor)
       }
+    },
+    computed:{
+      ...mapState({
+        themeColor: state=>state.app.themeColor
+      })
     }
   }
 </script>

@@ -55,6 +55,7 @@
       top: 60px;
       bottom: 0px;
       text-align: left;
+      // background-color: #2968a30c;
     }
     .logo {
       position:absolute;

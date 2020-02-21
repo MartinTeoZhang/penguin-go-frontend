@@ -2,7 +2,9 @@
   <el-color-picker
     class="theme-picker"
     popper-class="theme-picker-dropdown"
-    v-model="theme"></el-color-picker>
+    v-model="theme"
+    :size="size">
+  </el-color-picker>
 </template>
 
 <script>
@@ -11,10 +13,29 @@
   const ORIGINAL_THEME = '#409EFF' // default color
 
   export default {
+    name: 'ThemePicker',
+    props: {
+      default: { // 初始化主题，可由外部传入
+        type: String,
+        default: null
+      },
+      size: { // 初始化主题，可由外部传入
+        type: String,
+        default: 'small'
+      }
+    },
     data() {
       return {
         chalk: '', // content of theme-67da9a-chalk css
-        theme: ORIGINAL_THEME
+        theme: ORIGINAL_THEME,
+        showSuccess: true // 是否弹出换肤成功消息
+      }
+    },
+    mounted() {
+      if(this.default != null) {
+        this.theme = this.default
+        this.$emit('onThemeChange', this.theme)
+        this.showSuccess = false
       }
     },
     watch: {
@@ -59,13 +80,15 @@
         })
 
         // 响应外部操作
-        this.$emit('onThemeChange', val, oldVal)
-        // 把变更的新旧主题色导出来，并且绑定函数，这样在父组件就可以获取主题颜色更新其他组建了
-
-        this.$message({
-          message: '换肤成功',
-          type: 'success'
-        })
+        this.$emit('onThemeChange', val)
+        if(this.showSuccess) {
+          this.$message({
+            message: '换肤成功',
+            type: 'success'
+          })
+        } else {
+          this.showSuccess = true
+        }
       }
     },
 

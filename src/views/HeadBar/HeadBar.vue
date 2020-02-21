@@ -8,15 +8,15 @@
     <span class="nav-bar">
       <el-menu :default-active="activeIndex" class="el-menu-demo"
              :background-color="themeColor" text-color="#fff" active-text-color="#ffd04b" mode="horizontal" @select="selectNavBar()">
-        <el-menu-item index="1" @click="$router.push('/')"><i class="fa fa-home fa-lg"></i> {{$t("common.home")}} </el-menu-item>
-        <el-menu-item index="2" @click="openWindow('https://github.com/Ryzin/penguin-go')">{{$t("common.doc")}}</el-menu-item>
-        <el-menu-item index="2" @click="openWindow('https://moodle.scnu.edu.cn')">{{$t("common.blog")}}</el-menu-item>
-        <el-menu-item index="3" @click="openWindow('https://github.com/Ryzin/penguin-go')">{{$t("common.projectRepo")}}</el-menu-item>
+        <el-menu-item index="1" @click="$router.push('/')"><i class="fa fa-home fa-lg"></i>  </el-menu-item>
+        <el-menu-item index="2" @click="openWindow('https://github.com/Ryzin/penguin-go')">{{$t("common.projectRepo")}}</el-menu-item>
+        <el-menu-item index="3" @click="openWindow('https://github.com/Ryzin/penguin-go/wikis/Home')">{{$t("common.doc")}}</el-menu-item>
+        <el-menu-item index="4" @click="openWindow('https://moodle.scnu.edu.cn')">{{$t("common.blog")}}</el-menu-item>
       </el-menu>
     </span>
     <span class="tool-bar">
       <!-- 主题切换 -->
-      <theme-picker class="theme-picker" @onThemeChange="onThemeChange"></theme-picker>
+      <theme-picker class="theme-picker" :default="themeColor" @onThemeChange="onThemeChange"></theme-picker>
       <!-- 语言切换 -->
       <lang-selector class="lang-selector"></lang-selector>
       <!-- 用户信息 -->
@@ -65,9 +65,9 @@
         this.$store.commit('onCollapse');
       },
       // 切换主题
-      onThemeChange: function(themeColor, oldThemeColor) {
+      onThemeChange: function(themeColor) {
         // 设置 store 状态，保存共享主题色，这样其他绑定主题色的组件都可以自动更新了
-        this.$store.dispatch('onThemeChange', {themeColor, oldThemeColor});
+        this.$store.commit('setThemeColor', themeColor)
       },
       //退出登录
       logout: function() {
@@ -109,18 +109,16 @@
     right: 0px;
     height: 60px;
     line-height: 60px;
-    background: #409EFF;
     .hamburger-container {
       width: 40px;
       float: left;
-      cursor: pointer;
       color: white;
     }
     .nav-bar {
       margin-left: auto;
       float: left;
       .el-menu {
-        background: #409EFF80
+        background: #0a463480;
       }
     }
     .tool-bar {
