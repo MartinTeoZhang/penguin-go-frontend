@@ -121,7 +121,7 @@
         this.pageRequest.columnFilters = {name: {name:'name', value:this.filters.name}}
         this.$api.user.findPage(this.pageRequest).then((res) => {
           this.pageResult = res.data
-        })
+        }).then(data.callback)
       },
       // 批量删除
       handleDelete: function (data) {
