@@ -3,15 +3,17 @@ import vuex from 'vuex'
 
 Vue.use(vuex);
 
-import app from './modules/app';
+import app from './modules/app'
+import iframe from './modules/iframe'
 import user from './modules/user'
-import menu from './modules/menu';
+import menu from './modules/menu'
 
 // 引入模块化，这里把之前的状态抽取到application
 
 const store = new vuex.Store({
   modules: {
     app: app,
+    iframe: iframe,
     user: user,
     menu: menu
     // 其他

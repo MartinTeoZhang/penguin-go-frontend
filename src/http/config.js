@@ -1,11 +1,11 @@
 // config.js：axios 默认配置，包含基础路径等信息。
 
-import * as global from '@/utils/global'
+import { baseUrl } from '@/utils/global'
 
 export default {
   method: 'get',
   // 基础url前缀
-  baseURL: global.baseURL,
+  baseUrl: baseUrl,
   // 请求头信息
   headers: {
     'Content-Type': 'application/json;charset=UTF-8'

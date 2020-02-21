@@ -7,19 +7,27 @@
 
 <script>
   export default {
-    data() {
+    data () {
       return {
         src: ''
       }
     },
     methods: {
       // 获取路径
-      getSrc: function (url) {
-        return this.global.baseURL + url
+      resetSrc: function (url) {
+        this.src = this.global.baseUrl + url
       }
     },
-    mounted() {
-      this.src = this.getSrc("druid/login.html")
+    mounted () {
+      this.resetSrc(this.$store.state.iframe.iframeUrl)
+    },
+    watch: {
+      $route: {
+        handler: function (val, oldVal) {
+          // 如果是跳转到嵌套页面，切换iframe的url
+          this.resetSrc(val.path)
+        }
+      }
     }
   }
 </script>

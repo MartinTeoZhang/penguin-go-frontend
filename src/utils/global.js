@@ -4,8 +4,8 @@
  * 通过 this.Global 调用
  */
 
-export const baseURL= 'http://localhost:8088/' // 需与后端8088一致
+export const baseUrl= 'http://localhost:8088/' // 需与后端8088一致
 
 export default {
-  baseURL
+  baseUrl
 }
