@@ -1,8 +1,8 @@
-import axios from '../axios'
-
 /*
  * 角色管理模块
  */
+
+import axios from '../axios'
 
 // 保存
 export const save = (data) => {
@@ -26,5 +26,12 @@ export const findPage = (data) => {
     url: '/role/findPage',
     method: 'post',
     data
+  })
+}
+// 查询全部
+export const findAll = () => {
+  return axios({
+    url: '/role/findAll',
+    method: 'get'
   })
 }
