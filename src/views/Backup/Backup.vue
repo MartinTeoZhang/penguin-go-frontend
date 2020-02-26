@@ -42,7 +42,7 @@
       // 查询备份记录
       findRecords: function () {
         this.tableLoading = true
-        axios.get(this.baseUrl + 'backup/findRecords').then((res) => {
+        axios.get(this.baseUrl + '/backup/findRecords').then((res) => {
           res = res.data
           if(res.code == 200) {
             this.tableData = res.data
@@ -55,7 +55,7 @@
       // 数据备份
       handleBackup: function () {
         this.backupLoading = true
-        axios.get(this.baseUrl + 'backup/backup').then((res) => {
+        axios.get(this.baseUrl + '/backup/backup').then((res) => {
           res = res.data
           if(res.code == 200) {
             this.$message({ message: '操作成功', type: 'success' })
@@ -69,7 +69,7 @@
       // 数据还原
       handleRestore: function (data) {
         this.backupLoading = true
-        axios.get(this.baseUrl + 'backup/restore', {params : {name : data.name }}).then((res) => {
+        axios.get(this.baseUrl + '/backup/restore', {params : {name : data.name }}).then((res) => {
           res = res.data
           if(res.code == 200) {
             this.$message({ message: '操作成功', type: 'success' })
@@ -83,7 +83,7 @@
       // 删除备份
       handleDelete: function (data) {
         this.backupLoading = true
-        axios.get(this.baseUrl + 'backup/delete', {params : {name : data.name }}).then((res) => {
+        axios.get(this.baseUrl + '/backup/delete', {params : {name : data.name }}).then((res) => {
           res = res.data
           if(res.code == 200) {
             this.$message({ message: '操作成功', type: 'success' })

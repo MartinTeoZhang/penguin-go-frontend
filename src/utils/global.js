@@ -5,10 +5,12 @@
  */
 
 // 后台管理系统服务器地址
-export const baseUrl= 'http://localhost:8088/'
+export const baseUrl= 'http://192.168.83.131:8080/penguin-boot'
+// export const baseUrl= 'http://localhost:8088/'
 
 // 系统数据备份还原服务器地址
-export const backupBaseUrl= 'http://localhost:8080/'
+export const backupBaseUrl= 'http://192.168.83.131:8080/penguin-backup'
+// export const backupBaseUrl= 'http://localhost:8080/'
 
 export default {
   baseUrl,
