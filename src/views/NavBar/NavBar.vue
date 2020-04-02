@@ -3,7 +3,8 @@
   <!-- 导航宽度样式 -->
   <div class="menu-bar-container">
     <!-- logo -->
-    <div class="logo" :style="{'background-color':themeColor}" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'">
+    <div class="logo" :style="{'background-color':themeColor}" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'"
+         @click="$router.push('/')">
       <img src="@/assets/logo.png" /> <div>{{collapse?'':appName}}</div>
     </div>
     <!-- 导航菜单，菜单收缩状态绑定 -->
@@ -56,6 +57,7 @@
       bottom: 0px;
       text-align: left;
       // background-color: #2968a30c;
+      cursor:pointer;
     }
     .logo {
       position:absolute;
