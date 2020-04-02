@@ -23,6 +23,7 @@
 - 目标是搭建出一套简洁易用的快速解决方案，可以帮助开发者有效降低项目开发难度和成本。
 
 ### 功能计划
+
 - [x] 系统登录：系统用户登录，系统登录认证（token方式）
 - [x] 用户管理：新建用户，修改用户，删除用户，查询用户
 - [x] 机构管理：新建机构，修改机构，删除机构，查询机构
@@ -63,7 +64,6 @@
 - 安全框架：Apache Shiro 1.4.x
 - 视图框架：Spring MVC 5.x
 - 持久层框架：MyBatis 3.x
-- 定时器：Quartz 2.x
 - 数据库连接池：Druid 1.x
 - 日志管理：SLF4J、Log4j
 
@@ -111,7 +111,7 @@ penguin-frontend
 
 #### 后端安装
 
-Spring Coud 分支（dev，master）使用 Consul 作为注册中心，Consul 按照教程参考：
+Spring Coud 分支（dev，master）使用 Consul 作为注册中心，Consul 安装教程参考：
 
 [Spring Boot + Spring Cloud 实现权限管理系统 后端篇（十八）：服务注册和发现（Consul）](https://www.cnblogs.com/xifengxiaoma/p/9857996.html)
 
@@ -125,29 +125,23 @@ Spring Coud 分支（dev，master）使用 Consul 作为注册中心，Consul 按照教程参考：
 
 3. 编译代码
 
-    找到 kitty-pom 工程的 pom.xml，执行 maven clean install 命令编译一键打包。
+    找到 penguin-pom 工程的 pom.xml，执行 maven clean install 命令编译一键打包。
 
     一般来说不会有什么问题，如果还是编译不成功，可以按照优先级逐个编译试一试。
 
 4. 导入数据库
 
     新建 penguin 数据库，导入 penguin-admin 工程 doc/penguin.sql 脚本，导入初始化数据库。
+    
+    修改 penguin-admin 下 application.yml 中的数据库连接和账号密码为自己的数据库配置。
+
+    修改 penguin-backup 下 application.yml 中的数据库连接和账号密码为自己的数据库配置。
 
 5. 启动系统
 
-    找到 penguin-monitor 工程下的 PenguinMonitorApplication, 执行 Java 程序，启动项目。
-
-    找到 penguin-admin 工程下的 PenguinAdminApplication, 执行 Java 程序，启动项目。
-
-    找到 penguin-backup 工程下的 PenguinBackupApplication.java, 执行 Java 程序，启动项目。
+    找到 Consul 注册中心安装目录，执行 consul agent -dev 启动注册中心。
     
-    注意：监控服务器 monitor 要先启动，其他无所谓。
-
-6.修改配置
-
-    如果想自定义端口（默认是8090），可以修改 config/index.js 下的 port 属性。
-
-    后台服务器和备份服务器地址配置在 src/utils/global.js 文件中，按需修改。
+    注意：注册中心和监控服务器 monitor 要先启动，其他无所谓。
 
 
 #### 前端安装
@@ -158,7 +152,7 @@ Spring Coud 分支（dev，master）使用 Consul 作为注册中心，Consul 按照教程参考：
 
 2. 编译代码
 
-    进入项目根目录，执行 npm install, 下载安装项目依赖包。
+    进入项目根目录，执行 npm install, 下载和安装项目相关依赖包。
 
 3. 启动系统
 
@@ -171,6 +165,12 @@ Spring Coud 分支（dev，master）使用 Consul 作为注册中心，Consul 按照教程参考：
 5. Mock 开关
 
     通过修改src/mock/index.js中的openMock变量，可以一键开启或关闭Mock功能。
+
+6.修改配置
+
+    如果想自定义端口（默认是8090），可以修改 config/index.js 下的 port 属性。
+
+    后台服务器和备份服务器地址配置在 src/utils/global.js 文件中，按需修改。
 
 
 #### 部署项目至docker
