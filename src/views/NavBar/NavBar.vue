@@ -5,7 +5,7 @@
     <!-- logo -->
     <div class="logo" :style="{'background-color':themeColor}" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'"
          @click="$router.push('/')">
-      <img src="@/assets/logo.png" /> <div>{{collapse?'':appName}}</div>
+      <img v-if="collapse" src="@/assets/logo.png" /> <div>{{collapse?'':appName}}</div>
     </div>
     <!-- 导航菜单，菜单收缩状态绑定 -->
     <el-menu default-active="1" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'"
@@ -73,9 +73,10 @@
         float: left;
       }
       div {
-        font-size: 22px;
+        font-size: 24px;
         color: white;
         text-align: left;
+        padding-left: 20px;
       }
     }
     .menu-bar-width {

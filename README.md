@@ -22,7 +22,7 @@
 
 - 目标是搭建出一套简洁易用的快速解决方案，可以帮助开发者有效降低项目开发难度和成本。
 
-### 功能计划
+### 功能列表
 
 - [x] 系统登录：系统用户登录，系统登录认证（token方式）
 - [x] 用户管理：新建用户，修改用户，删除用户，查询用户
@@ -37,14 +37,14 @@
 - [x] 主题切换：支持主题切换，自定主题颜色，一键换肤
 - [x] 服务治理：集成Consul注册中心，实现服务注册和发现
 - [x] 服务监控：集成Spring Boot Admin，实现服务监控
-- 服务消费：集成Ribbon、Feign，服务调用和负载均衡
-- 服务网关：集成Spring Cloud Zuul，实现API网关
-- 服务熔断：集成Hystrix、Turbine，实现熔断和监控
-- 链路追踪：集成Sleuth、Zipkin，实现分布式链路追踪
-- 配置中心：集成Config、Bus，实现分布式配置中心
+- [x] 服务消费：集成Ribbon、Feign，服务调用和负载均衡
+- [x] 服务熔断：集成Hystrix、Turbine，实现熔断和监控
+- [x] 服务网关：集成Spring Cloud Zuul，实现API网关
+- [x] 链路追踪：集成Sleuth、Zipkin，实现分布式链路追踪
+- [x] 配置中心：集成Config、Bus，实现分布式配置中心
+- [x] 代码生成：提供代码生成器，最大化的降低代码开发量
 - 单点登录：利用 OAuth2, 提供统一的单点登录功能
 - 系统登录：集成第三方登录功能（QQ、微信、微博）
-- 代码生成：提供代码生成器，最大化的降低代码开发量
 - ...
 
 ### 软件架构
@@ -61,6 +61,7 @@
 ##### 技术选型
 
 - 核心框架：Spring Boot 2.x
+- 服务治理：Spring Cloud Finchley
 - 安全框架：Apache Shiro 1.4.x
 - 视图框架：Spring MVC 5.x
 - 持久层框架：MyBatis 3.x
@@ -74,6 +75,14 @@
 - penguin-admin： 后台管理模块，包含用户、角色、菜单管理等
 - penguin-backup： 系统数据备份备份模块，可选择独立部署
 - penguin-monitor： 系统监控服务端，监控Spring Boot服务模块
+
+- penguin-producer： 服务提供者示例，方便在此基础上搭建模块
+- penguin-consumer： 服务消费者示例，方便在此基础上搭建模块
+- penguin-hystrix： 服务熔断监控模块，收集汇总熔断统计信息
+- penguin-zuul： API服务网关模块，统一管理和转发外部调用请求
+
+- penguin-consul： 注册中心，安装说明目录，内附安装引导说明
+- penguin-zipkin： 链路追踪，安装说明目录，内附安装引导说明
 - penguin-pom： 聚合模块，仅为简化打包，一键执行打包所有模块
 
 #### 前端架构
@@ -111,10 +120,6 @@ penguin-frontend
 
 #### 后端安装
 
-Spring Coud 分支（dev，master）使用 Consul 作为注册中心，Consul 安装教程参考：
-
-[Spring Boot + Spring Cloud 实现权限管理系统 后端篇（十八）：服务注册和发现（Consul）](https://www.cnblogs.com/xifengxiaoma/p/9857996.html)
-
 1. 下载源码
 
     git clone
@@ -139,9 +144,17 @@ Spring Coud 分支（dev，master）使用 Consul 作为注册中心，Consul 安装教程参考：
 
 5. 启动系统
 
-    找到 Consul 注册中心安装目录，执行 consul agent -dev 启动注册中心。
-    
-    注意：注册中心和监控服务器 monitor 要先启动，其他无所谓。
+    找到 penguin-consul 工程，根据安装说明安装注册中心，完成后执行consul agent -dev启动。
+
+    找到 penguin-zipkin 工程，根据安装说明安装zipkin，如果不需要链路追踪服务的可以不用。
+
+    找到 penguin-monitor 工程下的 PenguinMonitorApplication, 执行 Java 程序，启动项目。
+
+    找到 penguin-admin 工程下的 PenguinAdminApplication, 执行 Java 程序，启动项目。
+
+    找到 penguin-backup 工程下的 PenguinBackupApplication.java, 执行 Java 程序，启动项目。
+
+    其他模块根据各自需要选择性启动...
 
 
 #### 前端安装
@@ -170,7 +183,7 @@ Spring Coud 分支（dev，master）使用 Consul 作为注册中心，Consul 安装教程参考：
 
     如果想自定义端口（默认是8090），可以修改 config/index.js 下的 port 属性。
 
-    后台服务器和备份服务器地址配置在 src/utils/global.js 文件中，按需修改。
+    后台接口和备份服务器地址配置在 src/utils/global.js，如有修改请做相应变更。
 
 
 #### 部署项目至docker

@@ -113,7 +113,7 @@
       }
     },
     mounted() {
-      this.sysName = "I like Kitty";
+      this.sysName = "主被试助手";
       var user = sessionStorage.getItem("user");
       if (user) {
         this.userName = user;
