@@ -21,7 +21,7 @@
     </el-table>
     <div slot="footer" class="dialog-footer">
       <el-button :size="size" @click.native="dialogVisible = false">{{$t('action.cancel')}}</el-button>
-      <el-button :size="size" type="primary" @click.native="handleFilterColumns">{{$t('action.comfirm')}}</el-button>
+      <el-button :size="size" type="primary" @click.native="handleFilterColumns">{{$t('action.confirm')}}</el-button>
     </div>
   </el-dialog>
 </template>

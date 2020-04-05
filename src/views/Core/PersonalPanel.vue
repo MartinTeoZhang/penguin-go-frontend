@@ -55,6 +55,7 @@
 </template>
 
 <script>
+  import Cookies from "js-cookie"
   import Backup from "@/views/Backup/Backup"
 
   export default {
@@ -95,9 +96,7 @@
       },
       // 删除cookie
       deleteCookie: function(name) {
-        var date=new Date();
-        date.setTime(date.getTime()-10000);
-        document.cookie=name+"=v; expires="+date.toGMTString();
+        Cookies.remove(name)
       },
       // 打开备份还原界面
       showBackupDialog: function() {
@@ -107,6 +106,7 @@
       afterRestore: function() {
         this.$refs.backupDialog.setBackupVisible(false)
         sessionStorage.removeItem("user")
+        this.deleteCookie("token")
         this.$router.push("/login")
         this.$api.login.logout().then((res) => {
         }).catch(function(res) {
