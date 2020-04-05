@@ -8,7 +8,7 @@
       <img v-if="collapse" src="@/assets/logo.png" /> <div>{{collapse?'':appName}}</div>
     </div>
     <!-- 导航菜单，菜单收缩状态绑定 -->
-    <el-menu default-active="1" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'"
+    <el-menu ref="navmenu" default-active="1" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'"
              :collapse="collapse" :collapse-transition="false" :unique-opened="true  "
              @open="handleopen" @close="handleclose" @select="handleselect">
       <!-- 导航菜单树组件，动态加载菜单。页面通过封装的组件，读取 store 数据 递归生成菜单 -->
@@ -70,6 +70,11 @@
           this.mainTabs = this.mainTabs.concat(tab)
         }
         this.mainTabsActiveName = tab.name
+        // 切换标签页时同步更新高亮菜单
+        if(this.$refs.navmenu != null) {
+          this.$refs.navmenu.activeIndex = '' + route.meta.index
+          this.$refs.navmenu.initOpenedMenu()
+        }
       }
     }
 
