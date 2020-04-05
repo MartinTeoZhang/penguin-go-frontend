@@ -1,14 +1,14 @@
 <template>
-  <div class="headbar-container" :style="{'background':themeColor}"
+  <div class="headbar" :style="{'background':themeColor}"
        :class="$store.state.app.collapse?'position-collapse-left':'position-left'">
     <!-- 导航收缩 -->
-    <span class="hamburger-container">
+    <span class="hamburg">
       <el-menu class="el-menu-demo" :background-color="themeColor" text-color="#fff" :active-text-color="themeColor" mode="horizontal">
         <el-menu-item index="1" @click="onCollapse"><hamburger :isActive="collapse"></hamburger></el-menu-item>
       </el-menu>
     </span>
     <!-- 导航菜单 -->
-    <span class="nav-bar">
+    <span class="navbar">
       <el-menu :default-active="activeIndex" class="el-menu-demo"
              :background-color="themeColor" text-color="#fff" active-text-color="#ffd04b" mode="horizontal" @select="selectNavBar()">
         <el-menu-item index="1" @click="$router.push('/')"><i class="fa fa-home fa-lg"></i>  </el-menu-item>
@@ -17,21 +17,34 @@
         <el-menu-item index="4" @click="openWindow('https://moodle.scnu.edu.cn')">{{$t("common.blog")}}</el-menu-item>
       </el-menu>
     </span>
-    <span class="tool-bar">
-      <!-- 主题切换 -->
-      <theme-picker class="theme-picker" :default="themeColor" @onThemeChange="onThemeChange"></theme-picker>
-      <!-- 语言切换 -->
-      <lang-selector class="lang-selector"></lang-selector>
-      <!-- 用户信息 -->
-      <el-dropdown class="user-info-dropdown" trigger="hover" @command="handleCommand">
-        <span class="el-dropdown-link"><img :src="this.userAvatar" /> {{userName}}</span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="msg">{{$t("common.myMsg")}}</el-dropdown-item>
-          <el-dropdown-item command="config">{{$t("common.config")}}</el-dropdown-item>
-          <el-dropdown-item command="backup">{{$t("common.backupRestore")}}</el-dropdown-item>
-          <el-dropdown-item divided @click.native="logout">{{$t("common.logout")}}</el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+    <!-- 工具栏 -->
+    <span class="toolbar">
+      <el-menu class="el-menu-demo" :background-color="themeColor" :text-color="themeColor" :active-text-color="themeColor" mode="horizontal">
+        <el-menu-item index="1">
+          <!-- 主题切换 -->
+          <theme-picker class="theme-picker" :default="themeColor" @onThemeChange="onThemeChange"></theme-picker>
+        </el-menu-item>
+        <el-menu-item index="2" v-popover:popover-lang>
+          <!-- 语言切换 -->
+          <li style="color:#fff;" class="fa fa-language fa-lg"></li>
+          <el-popover ref="popover-lang" placement="bottom-start" trigger="hover" v-model="langVisible">
+            <div class="lang-item" @click="changeLanguage('zh_cn')">简体中文</div>
+            <div class="lang-item" @click="changeLanguage('en_us')">English</div>
+          </el-popover>
+        </el-menu-item>
+        <el-menu-item index="3">
+          <!-- 用户信息 -->
+          <el-dropdown class="user-info" trigger="hover" @command="handleCommand">
+            <span class="el-dropdown-link"><img :src="this.userAvatar" />{{userName}}</span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="msg">{{$t("common.myMsg")}}</el-dropdown-item>
+              <el-dropdown-item command="config">{{$t("common.config")}}</el-dropdown-item>
+              <el-dropdown-item command="bakcup">{{$t("common.backupRestore")}}</el-dropdown-item>
+              <el-dropdown-item divided @click.native="logout">{{$t("common.logout")}}</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-menu-item>
+      </el-menu>
     </span>
     <!--备份还原界面-->
     <backup ref="backup" v-if="backupVisible" @afterRestore="afterRestore">  </backup>
@@ -44,6 +57,7 @@
   import Hamburger from "@/components/Hamburger"
   import ThemePicker from "@/components/ThemePicker"
   import LangSelector from "@/components/LangSelector"
+  import Action from "@/components/Toolbar/Action"
   import Backup from "@/views/Backup/Backup"
 
   export default {
@@ -51,6 +65,7 @@
       Hamburger,
       ThemePicker,
       LangSelector,
+      Action,
       Backup
     },
     data() {
@@ -58,6 +73,7 @@
         userName: "Ryzin",
         userAvatar: "",
         activeIndex: '1',
+        langVisible: false,
         backupVisible: false
       };
     },
@@ -78,7 +94,13 @@
         // 设置 store 状态，保存共享主题色，这样其他绑定主题色的组件都可以自动更新了
         this.$store.commit('setThemeColor', themeColor)
       },
-      // 处理头像弹窗功能
+      // 语言切换
+      changeLanguage(lang) {
+        lang = lang === '' ? 'zh_cn' : lang
+        this.$i18n.locale = lang
+        this.langVisible = false
+      },
+      // 处理下拉选项
       handleCommand(command) {
         if('backup' === command) {
           this.handleBackup()
@@ -133,7 +155,7 @@
 </script>
 
 <style scoped lang="scss">
-  .headbar-container {
+  .headbar {
     position: fixed;
     top: 0;
     right: 0;
@@ -143,37 +165,34 @@
     border-color: rgba(180, 190, 190, 0.8);
     border-left-width: 1px;
     border-left-style: solid;
-    .hamburger-container {
-      float: left;
-    }
-    .nav-bar {
-      float: left;
-    }
-    .tool-bar {
+  }
+  .hamburg, .navbar {
+    float: left;
+  }
+  .toolbar {
+    float: right;
+  }
+  .lang-item {
+    font-size: 16px;
+    padding-left: 8px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    cursor: pointer;
+  }
+  .lang-item:hover {
+    font-size: 18px;
+    background: #b0d6ce4d;
+  }
+  .user-info {
+    font-size: 20px;
+    color: #fff;
+    cursor: pointer;
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      margin: 10px 0px 10px 10px;
       float: right;
-      .theme-picker {
-        padding-right: 10px;
-        vertical-align: middle;
-      }
-      .lang-selector {
-        padding-right: 10px;
-        font-size: 15px;
-        color: #fff;
-        cursor: pointer;
-      }
-      .user-info-dropdown {
-        font-size: 20px;
-        padding-right: 20px;
-        color: #fff;
-        cursor: pointer;
-        img {
-          width: 40px;
-          height: 40px;
-          border-radius: 10px;
-          margin: 10px 0px 10px 10px;
-          float: right;
-        }
-      }
     }
   }
   .position-left {
