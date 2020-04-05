@@ -64,7 +64,8 @@
         if (!tab) {
           tab = {
             name: route.name,
-            title: route.name
+            title: route.name,
+            icon: route.meta.icon
           }
           this.mainTabs = this.mainTabs.concat(tab)
         }
