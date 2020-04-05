@@ -40,7 +40,7 @@
         <li class="fa fa-bell"></li>
         访问次数
       </div>
-      <div class="other-operation-item" @click="handleBackup">
+      <div class="other-operation-item" @click="showBackupDialog">
         <li class="fa fa-undo"></li>
         {{$t("common.backupRestore")}}
       </div>
@@ -50,7 +50,7 @@
       {{$t("common.logout")}}
     </div>
     <!--备份还原界面-->
-    <backup ref="backup" v-if="backupVisible" @afterRestore="afterRestore">  </backup>
+    <backup ref="backupDialog" @afterRestore="afterRestore"></backup>
   </div>
 </template>
 
@@ -75,7 +75,6 @@
     },
     data() {
       return {
-        backupVisible: false
       }
     },
     methods: {
@@ -94,14 +93,12 @@
           .catch(() => {})
       },
       // 打开备份还原界面
-      handleBackup: function() {
-        this.backupVisible = true
-        this.$nextTick(() => {
-          this.$refs.backup.init()
-        })
+      showBackupDialog: function() {
+        this.$refs.backupDialog.setBackupVisible(true)
       },
       // 成功还原之后，重新登录
       afterRestore: function() {
+        this.$refs.backupDialog.setBackupVisible(false)
         sessionStorage.removeItem("user")
         this.$router.push("/login")
         this.$api.login.logout().then((res) => {
@@ -122,11 +119,10 @@
     border-color: rgba(180, 190, 190, 0.2);
     border-width: 1px;
     border-style: solid;
-    background: rgba(180, 176, 176, 0.1);
-    margin: -12px;
+    background: rgba(182, 172, 172, 0.1);
+    margin: -14px;
   }
   .personal-desc {
-    background: rgb(19, 138, 156);
     padding: 15px;
     color: #fff;
   }
@@ -142,6 +138,7 @@
   .personal-relation {
     font-size: 16px;
     padding: 12px;
+    margin-right: 1px;
     background: rgba(200, 209, 204, 0.3);
   }
   .relation-item {
@@ -152,7 +149,8 @@
     color: rgb(19, 138, 156);
   }
   .main-operation {
-    padding: 10px;
+    padding: 8px;
+    margin-right: 1px;
     /* background: rgba(175, 182, 179, 0.3); */
     border-color: rgba(201, 206, 206, 0.2);
     border-top-width: 1px;
@@ -163,6 +161,7 @@
   }
   .other-operation {
     padding: 15px;
+    margin-right: 1px;
     text-align: left;
     border-color: rgba(180, 190, 190, 0.2);
     border-top-width: 1px;
@@ -177,6 +176,7 @@
     color: rgb(19, 138, 156);
   }
   .personal-footer {
+    margin-right: 1px;
     font-size: 14px;
     text-align: center;
     padding-top: 10px;
