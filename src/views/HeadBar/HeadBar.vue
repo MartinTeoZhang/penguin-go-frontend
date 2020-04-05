@@ -1,6 +1,7 @@
 <template>
-  <div class="container" :style="{'background':themeColor}" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'">
-    <!-- 导航菜单隐藏显示切换 -->
+  <div class="headbar-container" :style="{'background':themeColor}"
+       :class="$store.state.app.collapse?'position-collapse-left':'position-left'">
+    <!-- 导航收缩 -->
     <span class="hamburger-container" :style="{'background':themeColor}">
       <hamburger :onClick="onCollapse" :isActive="collapse"></hamburger>
     </span>
@@ -130,19 +131,31 @@
 </script>
 
 <style scoped lang="scss">
-  .container {
-    position: absolute;
-    left: 200px;
-    right: 0px;
+  .headbar-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1020;
     height: 60px;
     line-height: 60px;
+    border-color: rgba(180, 190, 190, 0.8);
+    border-left-width: 1px;
+    border-left-style: solid;
     .hamburger-container {
-      width: 40px;
       float: left;
       color: white;
+      width: 30px;
+      height: 34px;
+      border-radius: 5px;
+      padding-bottom: 12px;
+      margin-top: 5px;
+      margin-left: 5px;
+      // border-color: rgba(71, 187, 187, 0.5);
+      // border-width: 1px;
+      // border-style: solid;
     }
     .nav-bar {
-      margin-left: auto;
+      margin-left: 10px;
       float: left;
       .el-menu {
         background: #0a463480;
@@ -175,10 +188,10 @@
       }
     }
   }
-  .menu-bar-width {
+  .position-left {
     left: 200px;
   }
-  .menu-bar-collapse-width {
+  .position-collapse-left {
     left: 60px;
   }
 </style>
