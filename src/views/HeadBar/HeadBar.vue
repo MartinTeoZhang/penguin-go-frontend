@@ -32,10 +32,6 @@
             <div class="lang-item" @click="changeLanguage('en_us')">English</div>
           </el-popover>
         </el-menu-item>
-        <el-menu-item index="2" @click="handleBackup">
-          <!-- 备份还原 -->
-          <li style="color:#fff;" class="fa fa-archive fa-lg"></li>
-        </el-menu-item>
         <el-menu-item index="3" v-popover:popover-message>
           <!-- 我的私信 -->
           <el-badge :value="5" :max="99" class="badge" type="success">
@@ -63,8 +59,6 @@
         </el-menu-item>
       </el-menu>
     </span>
-    <!--备份还原界面-->
-    <backup ref="backup" v-if="backupVisible" @afterRestore="afterRestore">  </backup>
   </div>
 </template>
 
@@ -75,7 +69,6 @@
   import ThemePicker from "@/components/ThemePicker"
   import LangSelector from "@/components/LangSelector"
   import Action from "@/components/Toolbar/Action"
-  import Backup from "@/views/Backup/Backup"
   import NoticePanel from "@/views/Core/NoticePanel"
   import MessagePanel from "@/views/Core/MessagePanel"
   import PersonalPanel from "@/views/Core/PersonalPanel"
@@ -86,7 +79,6 @@
       ThemePicker,
       LangSelector,
       Action,
-      Backup,
       NoticePanel,
       MessagePanel,
       PersonalPanel
@@ -100,8 +92,7 @@
           registInfo: "注册时间：2020-04-05 "
         },
         activeIndex: '1',
-        langVisible: false,
-        backupVisible: false
+        langVisible: false
       };
     },
     methods: {
@@ -126,21 +117,6 @@
         lang = lang === '' ? 'zh_cn' : lang
         this.$i18n.locale = lang
         this.langVisible = false
-      },
-      // 打开备份还原界面
-      handleBackup: function() {
-        this.backupVisible = true
-        this.$nextTick(() => {
-          this.$refs.backup.init()
-        })
-      },
-      // 成功还原之后，重新登录
-      afterRestore: function() {
-        sessionStorage.removeItem("user")
-        this.$router.push("/login")
-        this.$api.login.logout().then((res) => {
-        }).catch(function(res) {
-        })
       }
     },
     mounted() {

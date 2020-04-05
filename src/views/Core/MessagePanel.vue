@@ -27,7 +27,7 @@
     props: {
       data: {
         type: Array,
-        default: [
+        default: () => [
           {
             key: "1",
             avatar:'@/assets/user.png',
