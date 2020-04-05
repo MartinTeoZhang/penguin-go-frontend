@@ -12,6 +12,8 @@ export default function $axios(options) {
     const instance = axios.create({
       baseURL: config.baseUrl,
       headers: config.headers,
+      timeout: config.timeout,
+      withCredentials: config.withCredentials
     })
 
     // request 拦截器
