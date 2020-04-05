@@ -12,8 +12,8 @@
       </el-form>
     </div>
     <!--表格内容栏-->
-    <kt-table
-      :data="pageResult" :columns="columns" :showOperation="showOperation" @findPage="findPage">
+    <kt-table :height="350"
+              :data="pageResult" :columns="columns" :showOperation="showOperation" @findPage="findPage">
     </kt-table>
   </div>
 </template>
