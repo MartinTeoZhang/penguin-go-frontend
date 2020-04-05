@@ -1,12 +1,12 @@
 # Penguin GO Backend
 
 ### 项目运行
-演示地址：http://192.168.83.129:8080/penguin
+演示地址：http://localhost:8090
 
 用户名：admin 密码：admin
 
 温馨提示：
-若曾在演示环境删除数据，可以右键头像菜单 -> 选择 -> 备份还原，恢复到系统默认备份数据。
+若曾在演示环境删除数据，可以点击头像菜单 -> 选择 -> 备份还原，恢复到系统默认备份数据。
 
 ### 分支说明
 
@@ -132,7 +132,7 @@ penguin-frontend
 
 3. 编译代码
 
-    找到 penguin-pom 工程的 pom.xml，执行 maven clean install 命令编译一键打包。
+    找到 penguin-pom 工程的 pom.xml，执行 mvn clean install 命令编译一键打包。
 
     一般来说不会有什么问题，如果还是编译不成功，可以按照优先级逐个编译试一试。
 
@@ -156,7 +156,7 @@ penguin-frontend
 
     找到 penguin-backup 工程下的 PenguinBackupApplication.java, 执行 Java 程序，启动项目。
 
-    其他模块根据各自需要选择性启动...
+    包含以上模块已经可以满足权限管理系统的运行了，其他模块根据各自需要选择性启动。
 
 
 #### 前端安装

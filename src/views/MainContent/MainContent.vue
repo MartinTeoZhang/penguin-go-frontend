@@ -136,9 +136,10 @@
       border-left-style: solid;
       border-bottom-width: 1px;
       border-bottom-style: solid;
+      background: rgba(255, 255, 255, 1);
     }
     .tabs-tools:hover {
-      background: rgba(200, 206, 206, 0.5);
+      background: rgba(200, 206, 206, 1);
     }
     .main-content {
       position: absolute;
