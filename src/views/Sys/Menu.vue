@@ -185,7 +185,7 @@
       findTreeData: function() {
         this.loading = true
         this.$api.menu.findMenuTree().then((res) => {
-          this.tableTreeDdata = res.data
+          this.tableTreeData = res.data
           this.popupTreeData = this.getParentMenuTree(res.data)
           this.loading = false
         })
