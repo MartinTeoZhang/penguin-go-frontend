@@ -26,7 +26,8 @@
 
 <style scoped lang="scss">
   .container {
-    position:absolute;
+    /*max-width: 1140px;*/
+    position: absolute;
     top: 0px;
     left: 0px;
     right: 0px;

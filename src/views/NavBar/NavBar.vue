@@ -9,7 +9,7 @@
     </div>
     <!-- 导航菜单，菜单收缩状态绑定 -->
     <el-menu ref="navmenu" default-active="1" :class="collapse?'menu-bar-collapse-width':'menu-bar-width'"
-             :collapse="collapse" :collapse-transition="false" :unique-opened="true  "
+             :collapse="collapse" :collapse-transition="false" :unique-opened="true"
              @open="handleopen" @close="handleclose" @select="handleselect">
       <!-- 导航菜单树组件，动态加载菜单。页面通过封装的组件，读取 store 数据 递归生成菜单 -->
       <menu-tree v-for="item in navTree" :key="item.id" :menu="item"></menu-tree>
@@ -84,12 +84,12 @@
 <style scoped lang="scss">
   .menu-bar-container {
     position: fixed;
-    top: 0px;
+    top: 0;
     left: 0;
     bottom: 0;
     z-index: 1020;
     .el-menu {
-      position:absolute;
+      position: absolute;
       top: 60px;
       bottom: 0px;
       text-align: left;
@@ -121,6 +121,10 @@
     }
     .menu-bar-collapse-width {
       width: 60px;
+    }
+    .content {
+      width: 960px;
+      height: 100px;
     }
   }
 </style>
