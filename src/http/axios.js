@@ -29,6 +29,9 @@ export default function $axios(options) {
         } else {
           // 重定向到登录页面
           router.push('/login')
+          // TODO
+          console.log('重定向到登录页面')
+          console.log(router)
         }
         // 3. 根据请求方法，序列化传来的参数，根据后端需求是否序列化
         if (config.method === 'post') {
@@ -42,6 +45,8 @@ export default function $axios(options) {
           //   config.data = qs.stringify(config.data)
           // }
         }
+        // TODO
+        console.log(config)
         return config
       },
 

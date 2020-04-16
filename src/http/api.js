@@ -8,6 +8,7 @@ import * as role from './modules/role'
 import * as menu from './modules/menu'
 import * as dict from './modules/dict'
 import * as log from './modules/log'
+import * as exp from './modules/exp'
 
 // 默认全部导出
 export default {
@@ -17,5 +18,6 @@ export default {
   role,
   menu,
   dict,
-  log
+  log,
+  exp
 }
