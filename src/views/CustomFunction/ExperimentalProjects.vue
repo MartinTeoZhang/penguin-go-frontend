@@ -20,10 +20,9 @@
         </el-form-item>
       </el-form>
     </div>
-
-    <div>
+    <div class="cards" >
       <!-- Card卡片 -->
-      <el-card shadow="hover" class="box-card">
+      <!-- <el-card shadow="hover" class="box-card">
         <div slot="header" class="clearfix">
           <span>简单的按键+皮电实验</span>
           <sapn style="float: right; color: red" type="text">25元</sapn>
@@ -39,7 +38,39 @@
             </div>
           </el-col>
         </el-row>
+      </el-card> -->
+      <el-card shadow="hover" class="box-card" v-for="(re, index) in pageResult.content" :key="index">
+        <div slot="header" class="clearfix">
+          <span>{{re.name}}</span>
+          <sapn style="float: right; color: red" type="text">{{getPaymentMin(re.payment)}}~{{getPaymentMax(re.payment)}}元</sapn>
+        </div>
+        <el-row :gutter="20">
+          <el-col :span="11">
+            <img height="100" width="200"
+                 src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image">
+          </el-col>
+          <el-col :span="9">
+            <div class="text item">
+              人数：{{re.peopleNum}}人
+            </div>
+            <div class="text item">
+              时长：{{re.duration}}分钟
+            </div>
+            <div class="text item">
+              类型：
+              <span v-for="(type,index) in strToArray(re.types)" :key="index">
+                  {{type}};
+                </span>
+            </div>
+          </el-col>
+        </el-row>
       </el-card>
+    </div>
+    <!--分页栏-->
+    <div class="toolbar-page" style="padding:10px;">
+      <el-pagination layout="total, prev, pager, next, jumper" @current-change="refreshPageRequest"
+                     :current-page="pageRequest.pageNum" :page-size="pageRequest.pageSize" :total="pageResult.totalSize" style="float:left;">
+      </el-pagination>
     </div>
   </div>
 </template>
@@ -66,8 +97,48 @@
           type: [],
           resource: '',
           desc: ''
-        }
+        },
+        pageRequest: { pageNum: 1, pageSize: 10 },
+        pageResult: {},
       };
+    },
+    mounted(){
+      this.findPage(null)
+    },
+    methods:{
+      // 获取已发布的实验项目分页数据
+      findPage : function(data){
+        if(data !== null) {
+          this.pageRequest = data.pageRequest
+        }
+        this.pageRequest.columnFilters = {status: {name:'status', value:'2'}}
+        this.$api.exp.findPage(this.pageRequest).then((res) => {
+          this.pageResult = res.data
+        })
+      },
+      handleAdd: function () {
+
+      },
+      strToJson: function(str){
+        var n = str.replace(/\\'/g,"\"")
+        return JSON.parse(n)
+      },
+      strToArray: function(str){
+        str = str.replace(/\\'/g,"");
+        str = str.substring(1,str.length-1);
+        return str.split(",");
+      },
+      getPaymentMin: function(payment){
+        return this.strToJson(payment).paymentMin
+      },
+      getPaymentMax: function(payment){
+        return this.strToJson(payment).paymentMax
+      },
+      // 换页刷新
+      refreshPageRequest: function (pageNum) {
+        this.pageRequest.pageNum = pageNum
+        this.findPage(null)
+      },
     }
   }
 </script>
@@ -96,7 +167,5 @@
     height: 200px;
     text-align: left;
   }
+
 </style>
-
-
-
