@@ -16,7 +16,7 @@
     </div>
 
     <!--表格内容栏-->
-    <kt-table permsEdit="sys:funExp:edit" permsDelete="sys:funExp:delete"
+    <kt-table :height="1000" permsEdit="sys:funExp:edit" permsDelete="sys:funExp:delete"
               :data="pageResult" :columns="columns"
               @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
     </kt-table>
@@ -150,8 +150,9 @@
         </el-form-item>
         <el-form-item label="上传图片" prop="fileList" style="text-align: left">
           <el-upload
-            class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            class="uploadFile"
+            action="http://localhost:8001/posts/"
+            v-if="this.dataForm.fileList.length<5"
             :on-preview="previewImageFile"
             :on-remove="removeImageFile"
             :on-success="successImageFile"
@@ -160,13 +161,12 @@
             ref="upload"
             :auto-upload="true"
             drag
-            multiple
             :limit="this.multiLimit"
             list-type="picture"
             style="width: 100%">
             <i class="el-icon-upload"></i>
             <div class="el-upload__text" style="justify-content: center">将文件拖到此处，或<em>点击上传</em></div>
-            <div class="el-upload__tip" slot="tip">只能上传5份jpg/png文件，且不超过500kb（第一张为实验封面）</div>
+            <div class="el-upload__tip" slot="tip">只能上传5个jpg/png文件，且不超过500kb（第一张为实验封面）</div>
           </el-upload>
         </el-form-item>
         <el-form-item label="备注" prop="note">
@@ -204,10 +204,10 @@
         },
 
         columns: [
-          {prop:"id", label:"编号", minWidth:100},
+          {prop:"id", label:"编号", minWidth:20},
           {prop:"name", label:"实验名称", minWidth:100},
-          {prop:"status", label:"实验状态", minWidth:100},
-          {prop:"types", label:"实验类型 0：审核中 1：未发布 2：发布中 3：已结束", minWidth:100},
+          {prop:"status", label:"实验状态 0：审核中 1：未发布 2：发布中 3：已结束", minWidth:100},
+          {prop:"types", label:"实验类型", minWidth:100},
           {prop:"payment", label:"实验报酬", minWidth:100},
           {prop:"contact", label:"联系方式", minWidth:100},
           {prop:"peopleNum", label:"实验人数", minWidth:100},
@@ -225,7 +225,7 @@
           {prop:"lastUpdateTime", label:"更新时间", minWidth:100},
         ],
 
-        pageRequest: { pageNum: 1, pageSize: 8 },
+        pageRequest: { pageNum: 1, pageSize: 10 },
         pageResult: {},
 
         dataFormRules: {
@@ -268,19 +268,22 @@
             { maxLength: 999, message: '长度在999个字符内', trigger: 'blur' }
           ],
           duration: [
-            { required: true, message: '请输入实验时长', trigger: 'blur'},
+            { required: true, message: '请输入实验时长', trigger: 'blur' },
             { type: 'number', min: 1, max: 999, message: '实验时长在[1, 999]范围内', trigger: 'blur' },
             { validator: isInteger}
           ],
           requirements: [
-            { type: 'array', required: false},
-            { validator: this.checkSelectedRequirements, trigger: 'change'}
+            { type: 'array', required: false },
+            { validator: this.checkSelectedRequirements, trigger: 'change' }
           ],
           preferences: [
-            { type: 'array', required: false}
+            { type: 'array', required: false }
           ],
           questionnaireId: [
             { required: false, min:8, max: 8 , message: '问卷ID为8位数', trigger: 'blur'}
+          ],
+          fileList: [
+            { validator: this.checkFileList, trigger:'change' }
           ],
           note: { maxLength: 999, message: '长度在999个字符内', trigger: 'blur' }
         },
@@ -467,6 +470,12 @@
         }
         callback()
       },
+      checkFileList: function(rule, value, callback) {
+        // console.log(val)
+        if (value.length > 5)
+            callback(new Error('最多只能上传5张图片'));
+        callback()
+      },
       // 编辑
       submitForm: function () {
         this.$refs.dataForm.validate((valid) => {
@@ -477,43 +486,14 @@
               // this.$refs.upload.submit(); // 上传文件
 
               // （可能需要注意双引号无法正确识别的问题 https://www.cnblogs.com/wangyunjie/p/5826676.html）
-              // // 数组转JSON格式
-              // let types = []
-              // for(let i=0,len=params.types.length; i<len; i++) {
-              //   let type = {
-              //     typeName: params.types[i]
-              //   }
-              //   types.push(type)
-              // }
               params.types = JSON.stringify(params.types).replace(/\"/g, "\\'")
-              //
               params.payment = JSON.stringify(params.payment).replace(/\"/g, "\\'")
-              //
-              // // 数组转JSON格式
-              // let requirements = []
-              // for(let i=0,len=params.requirements.length; i<len; i++) {
-              //   let type = {
-              //     requirementName: params.requirements[i]
-              //   }
-              //   requirements.push(type)
-              // }
               params.requirements = JSON.stringify(params.requirements).replace(/\"/g, "\\'")
-              //
               params.time = JSON.stringify(params.time).replace(/\"/g, "\\'")
-              //
-              // // 数组转JSON格式
-              // let preferences = []
-              // for(let i=0,len=params.preferences.length; i<len; i++) {
-              //   let type = {
-              //     preferenceName: params.preferences[i]
-              //   }
-              //   preferences.push(type)
-              // }
               params.preferences = JSON.stringify(params.preferences).replace(/\"/g, "\\'")
-              //
               params.fileList = JSON.stringify(params.fileList).replace(/\"/g, "\\'")
 
-              console.log(params)
+              // console.log(params)
               this.$api.exp.save(params).then((res) => {
                 this.editLoading = false
                 if(res.code == 200) {
@@ -549,18 +529,18 @@
         this.imageDialogVisible = true
       },
       removeImageFile(file, fileList) {
-        // this.dataForm.fileList.remove(file) // TODO
-        // // 文件删除后也要触发验证,validateField是触发部分验证的方法,参数是prop设置的值
-        // this.$refs.dataForm.validateField('fileList')
+        this.dataForm.fileList = fileList
+        // 文件删除后也要触发验证,validateField是触发部分验证的方法,参数是prop设置的值
+        this.$refs.dataForm.validateField('fileList')
       },
       successImageFile(res, file, fileList) { // 图片上传
-        // // 这里可以写文件上传成功后的处理,但是一定要记得给fileList赋值
-        // this.dataForm.fileList.append(file) // TODO
-        // // 文件上传后不会触发form表单的验证,要手动添加验证
-        // this.$refs.dataForm.validateField('fileList')
+        // 这里可以写文件上传成功后的处理,但是一定要记得给fileList赋值
+        this.dataForm.fileList.push(file)
+        // 文件上传后不会触发form表单的验证,要手动添加验证
+        this.$refs.dataForm.validateField('fileList')
       },
       beforeImageFileUpload: function(file) {
-        console.log(file)
+        // console.log(file)
         const isJPG = file.type === 'image/jpeg';
         const isPNG = file.type === 'image/png';
         const isPG = (isJPG || isPNG)  //限制图片格式为jpg/png
