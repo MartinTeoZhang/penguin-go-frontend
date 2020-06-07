@@ -30,3 +30,30 @@ export const findPage = (data) => {
     data
   })
 }
+
+// 查询实验用户集合
+export const findExpUsers = (params) => {
+  return axios({
+    url: '/exp/findExpUsers',
+    method: 'get',
+    params
+  })
+}
+
+// 保存实验用户
+export const saveExpUser = (data) => {
+  return axios({
+    url: '/exp/saveExpUser',
+    method: 'post',
+    data
+  })
+}
+
+// 查询实验的报名人数
+export const getExpUserCount = (params) => {
+  return axios({
+    url: '/exp/getExpUserCount',
+    method: 'get',
+    params
+  })
+}
