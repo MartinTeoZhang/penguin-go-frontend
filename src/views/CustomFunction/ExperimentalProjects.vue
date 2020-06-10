@@ -47,24 +47,6 @@
 
     <!--展示实验项目-->
     <div class="cards" >
-      <!-- Card卡片 -->
-      <!-- <el-card shadow="hover" class="box-card">
-        <div slot="header" class="clearfix">
-          <span>简单的按键+皮电实验</span>
-          <span style="float: right; color: red" type="text">25元</span>
-        </div>
-        <el-row :gutter="20">
-          <el-col :span="11">
-              <img height="100" width="200"
-                 src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image">
-          </el-col>
-          <el-col :span="6">
-            <div v-for="o in 3" :key="o" class="text item">
-              {{'列表内容 ' + o }}
-            </div>
-          </el-col>
-        </el-row>
-      </el-card> -->
       <el-card shadow="hover" class="box-card" v-for="(re, index) in pageResult.content" :key="index" @click.native="clickCard(re, index)">
         <div slot="header" class="clearfix">
           <span>{{re.name}}</span>

@@ -7,19 +7,45 @@
           <el-input v-model="filters.name" placeholder="实验名"></el-input>
         </el-form-item>
         <el-form-item>
-          <kt-button icon="fa fa-search" :label="$t('action.search')" perms="sys:role:view" type="primary" @click="findPage(null)"/>
+          <kt-button icon="fa fa-search" :label="$t('action.search')" perms="fun:subject:viewexp" type="primary" @click="findPage(null)"/>
         </el-form-item>
         <el-form-item>
-          <kt-button icon="fa fa-plus" label="新增实验" perms="sys:user:add" type="primary" @click="handleAdd" />
+          <kt-button icon="fa fa-plus" label="新增实验" perms="fun:subject:addexp" type="primary" @click="handleAdd" />
         </el-form-item>
       </el-form>
     </div>
 
-    <!--表格内容栏-->
-    <kt-table :height="1000" permsEdit="sys:funExp:edit" permsDelete="sys:funExp:delete"
-              :data="pageResult" :columns="columns"
-              @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
-    </kt-table>
+    <!-- Card卡片 -->
+    <el-col :gutter="20">
+      <el-card class="box-card" shadow="hover" :size="size">
+        <div slot="header" class="clearfix">
+          <span>卡片名称</span>
+          <div class="state">
+            <span class="state-content">ID: 1231314</span>
+            <span class="state-content">未发布</span>
+            <span class="state-content">2020/02/11 19:00:00</span>
+          </div>
+        </div>
+        <el-row class="card-button">
+          <kt-button icon="el-icon-edit" :label="$t('action.edit')" type="text"
+                     style="color: #409EFF" perms="fun:subject:editexp" @click="handleEdit">编辑</kt-button>
+          <kt-button icon="el-icon-share" :label="$t('action.share')" type="text"
+                     style="color: #67C23A" disabled>分享</kt-button>
+          <kt-button icon="el-icon-delete" :label="$t('action.delete')" type="text"
+                     style="color: #F56C6C" perms="fun:subject:deleteexp" @click="handleDelete">删除</kt-button>
+        </el-row>
+<!--        <div v-for="o in 4" :key="o" class="text item">-->
+<!--          {{'列表内容 ' + o }}-->
+<!--        </div>-->
+      </el-card>
+
+    </el-col>
+
+<!--    &lt;!&ndash;表格内容栏&ndash;&gt;-->
+<!--    <kt-table :height="1000" permsEdit="sys:funExp:edit" permsDelete="sys:funExp:delete"-->
+<!--              :data="pageResult" :columns="columns"-->
+<!--              @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">-->
+<!--    </kt-table>-->
 
     <!--新增编辑界面-->
     <el-dialog :title="operation?'新增':'编辑'" width="50%" :visible.sync="dialogVisible" :close-on-click-modal="false">
@@ -148,27 +174,27 @@
             </el-select>
           </el-input>
         </el-form-item>
-        <el-form-item label="上传图片" prop="fileList" style="text-align: left">
-          <el-upload
-            class="uploadFile"
-            action="http://localhost:8001/posts/"
-            v-if="this.dataForm.fileList.length<5"
-            :on-preview="previewImageFile"
-            :on-remove="removeImageFile"
-            :on-success="successImageFile"
-            :before-upload="beforeImageFileUpload"
-            :file-list="dataForm.fileList"
-            ref="upload"
-            :auto-upload="true"
-            drag
-            :limit="this.multiLimit"
-            list-type="picture"
-            style="width: 100%">
-            <i class="el-icon-upload"></i>
-            <div class="el-upload__text" style="justify-content: center">将文件拖到此处，或<em>点击上传</em></div>
-            <div class="el-upload__tip" slot="tip">只能上传5个jpg/png文件，且不超过500kb（第一张为实验封面）</div>
-          </el-upload>
-        </el-form-item>
+<!--        <el-form-item label="上传图片" prop="fileList" style="text-align: left">-->
+<!--          <el-upload-->
+<!--            class="uploadFile"-->
+<!--            action="http://localhost:8001/posts/"-->
+<!--            v-if="this.dataForm.fileList.length<5"-->
+<!--            :on-preview="previewImageFile"-->
+<!--            :on-remove="removeImageFile"-->
+<!--            :on-success="successImageFile"-->
+<!--            :before-upload="beforeImageFileUpload"-->
+<!--            :file-list="dataForm.fileList"-->
+<!--            ref="upload"-->
+<!--            :auto-upload="true"-->
+<!--            drag-->
+<!--            :limit="this.multiLimit"-->
+<!--            list-type="picture"-->
+<!--            style="width: 100%">-->
+<!--            <i class="el-icon-upload"></i>-->
+<!--            <div class="el-upload__text" style="justify-content: center">将文件拖到此处，或<em>点击上传</em></div>-->
+<!--            <div class="el-upload__tip" slot="tip">只能上传5个jpg/png文件，且不超过500kb（第一张为实验封面）</div>-->
+<!--          </el-upload>-->
+<!--        </el-form-item>-->
         <el-form-item label="备注" prop="note">
           <el-input type="textarea" v-model="dataForm.note" maxlength="999" show-word-limit :rows="5"></el-input>
         </el-form-item>
@@ -524,51 +550,81 @@
           });
         }
       },
-      previewImageFile(file) {
-        this.dialogImageUrl = file.url
-        this.imageDialogVisible = true
-      },
-      removeImageFile(file, fileList) {
-        this.dataForm.fileList = fileList
-        // 文件删除后也要触发验证,validateField是触发部分验证的方法,参数是prop设置的值
-        this.$refs.dataForm.validateField('fileList')
-      },
-      successImageFile(res, file, fileList) { // 图片上传
-        // 这里可以写文件上传成功后的处理,但是一定要记得给fileList赋值
-        this.dataForm.fileList.push(file)
-        // 文件上传后不会触发form表单的验证,要手动添加验证
-        this.$refs.dataForm.validateField('fileList')
-      },
-      beforeImageFileUpload: function(file) {
-        // console.log(file)
-        const isJPG = file.type === 'image/jpeg';
-        const isPNG = file.type === 'image/png';
-        const isPG = (isJPG || isPNG)  //限制图片格式为jpg/png
-        const isLt500KB = file.size / 1024 / 1024 < 0.5; //限制图片大小
-
-        if(!isPG) {
-          this.$message({
-            message: '上传的文件只能是jpg/png格式',
-            type: 'warning'
-          });
-        }
-
-        if(!isLt500KB) {
-          this.$message({
-            message: '上传的文件大小不能超过500kb',
-            type: 'warning'
-          });
-        }
-
-        return isPG && isLt500KB
-      },
+      // 文件上传，暂时不作实现
+      // previewImageFile(file) {
+      //   this.dialogImageUrl = file.url
+      //   this.imageDialogVisible = true
+      // },
+      // removeImageFile(file, fileList) {
+      //   this.dataForm.fileList = fileList
+      //   // 文件删除后也要触发验证,validateField是触发部分验证的方法,参数是prop设置的值
+      //   this.$refs.dataForm.validateField('fileList')
+      // },
+      // successImageFile(res, file, fileList) { // 图片上传
+      //   // 这里可以写文件上传成功后的处理,但是一定要记得给fileList赋值
+      //   this.dataForm.fileList.push(file)
+      //   // 文件上传后不会触发form表单的验证,要手动添加验证
+      //   this.$refs.dataForm.validateField('fileList')
+      // },
+      // beforeImageFileUpload: function(file) {
+      //   // console.log(file)
+      //   const isJPG = file.type === 'image/jpeg';
+      //   const isPNG = file.type === 'image/png';
+      //   const isPG = (isJPG || isPNG)  //限制图片格式为jpg/png
+      //   const isLt500KB = file.size / 1024 / 1024 < 0.5; //限制图片大小
+      //
+      //   if(!isPG) {
+      //     this.$message({
+      //       message: '上传的文件只能是jpg/png格式',
+      //       type: 'warning'
+      //     });
+      //   }
+      //
+      //   if(!isLt500KB) {
+      //     this.$message({
+      //       message: '上传的文件大小不能超过500kb',
+      //       type: 'warning'
+      //     });
+      //   }
+      //
+      //   return isPG && isLt500KB
+      // },
 
     },
     mounted() {
+      this.findPage(null)
     }
   }
 </script>
 
 <style scoped>
+  .box-card {
+    margin-bottom: 20px;
+    width: 800px;
+    height: 125px;
+    text-align: left;
+  }
+  .card-button {
+    float: right;
+    margin-left: 20px;
+  }
+  .state {
+    margin-top: 5px;
+    margin-left: 10px;
+    float: right;
+    font-size: small;
+    color: #999;
+  }
+  .state-content {
+    margin-left: 10px;
+  }
+  .clearfix:before,
+  .clearfix:after {
+    display: table;
+    content: "";
+  }
 
+  .clearfix:after {
+    clear: both
+  }
 </style>
