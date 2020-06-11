@@ -9,6 +9,7 @@ import * as menu from './modules/menu'
 import * as dict from './modules/dict'
 import * as log from './modules/log'
 import * as exp from './modules/exp'
+import * as profile from './modules/profile'
 
 // 默认全部导出
 export default {
@@ -19,5 +20,6 @@ export default {
   menu,
   dict,
   log,
-  exp
+  exp,
+  profile
 }

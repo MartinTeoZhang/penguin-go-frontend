@@ -145,7 +145,7 @@
         }
         this.pageRequest.columnFilters = {name: {name:'name', value:this.filters.name}}
         this.$api.user.findPage(this.pageRequest).then((res) => {
-          this.pageResult = res.data
+          this.pageResult = res.data;
           this.findUserRoles()
         }).then(data!=null?data.callback:'')
       },

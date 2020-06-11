@@ -7,7 +7,7 @@ import axios from '../axios'
 // 保存
 export const save = (data) => {
   return axios({
-    url: '/exp/save',
+    url: '/funExp/save',
     method: 'post',
     data
   })
@@ -16,7 +16,7 @@ export const save = (data) => {
 // 删除
 export const batchDelete = (data) => {
   return axios({
-    url: '/exp/delete',
+    url: '/funExp/delete',
     method: 'post',
     data
   })
@@ -25,7 +25,7 @@ export const batchDelete = (data) => {
 // 分页查询
 export const findPage = (data) => {
   return axios({
-    url: '/exp/findPage',
+    url: '/funExp/findPage',
     method: 'post',
     data
   })
@@ -34,7 +34,7 @@ export const findPage = (data) => {
 // 查询实验用户集合
 export const findExpUsers = (params) => {
   return axios({
-    url: '/exp/findExpUsers',
+    url: '/funExp/findExpUsers',
     method: 'get',
     params
   })
@@ -43,7 +43,7 @@ export const findExpUsers = (params) => {
 // 保存实验用户
 export const saveExpUser = (data) => {
   return axios({
-    url: '/exp/saveExpUser',
+    url: '/funExp/saveExpUser',
     method: 'post',
     data
   })
@@ -52,7 +52,7 @@ export const saveExpUser = (data) => {
 // 查询实验的报名人数
 export const getExpUserCount = (params) => {
   return axios({
-    url: '/exp/getExpUserCount',
+    url: '/funExp/getExpUserCount',
     method: 'get',
     params
   })
