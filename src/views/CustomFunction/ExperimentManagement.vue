@@ -15,24 +15,36 @@
       </el-form>
     </div>
 
-    <!-- Card卡片 -->
+    <!--分页栏-->
+    <div class="toolbar" style="padding:10px;">
+      <el-pagination layout="total, prev, pager, next, jumper" @current-change="refreshPageRequest"
+                     :current-page="pageRequest.pageNum" :page-size="pageRequest.pageSize"
+                     :total="pageResult.totalSize" style="float:right;">
+      </el-pagination>
+    </div>
+
+    <!-- 卡片 -->
     <el-col :gutter="20">
-      <el-card class="box-card" shadow="hover" :size="size">
+      <el-card class="box-card" shadow="hover" v-for="(exp, index) in pageResult.content" :key="index"
+               @click.native="handleEdit(exp)" :size="size">
         <div slot="header" class="clearfix">
-          <span>卡片名称</span>
+          <span>{{exp.name}}</span>
           <div class="state">
-            <span class="state-content">ID: 1231314</span>
-            <span class="state-content">未发布</span>
-            <span class="state-content">2020/02/11 19:00:00</span>
+            <span class="state-content">ID: {{exp.id}}</span>
+            <span v-if="exp.status === 0" class="state-content">审核中</span>
+            <span v-if="exp.status === 1" class="state-content">未发布</span>
+            <span v-if="exp.status === 2" class="state-content">发布中</span>
+            <span v-if="exp.status === 3" class="state-content">已结束</span>
+            <span class="state-content">{{dateFormatter(exp.createTime)}}</span>
           </div>
         </div>
         <el-row class="card-button">
           <kt-button icon="el-icon-edit" :label="$t('action.edit')" type="text"
-                     style="color: #409EFF" perms="fun:subject:editexp" @click="handleEdit">编辑</kt-button>
+                     style="color: #409EFF" perms="fun:subject:editexp" @click="handleEdit(exp)">编辑</kt-button>
           <kt-button icon="el-icon-share" :label="$t('action.share')" type="text"
                      style="color: #67C23A" disabled>分享</kt-button>
           <kt-button icon="el-icon-delete" :label="$t('action.delete')" type="text"
-                     style="color: #F56C6C" perms="fun:subject:deleteexp" @click="handleDelete">删除</kt-button>
+                     style="color: #F56C6C" perms="fun:subject:deleteexp" @click="handleDelete(index)">删除</kt-button>
         </el-row>
 <!--        <div v-for="o in 4" :key="o" class="text item">-->
 <!--          {{'列表内容 ' + o }}-->
@@ -204,6 +216,8 @@
         <el-button :size="size" type="primary" @click.native="submitForm" :loading="editLoading">{{$t('action.submit')}}</el-button>
       </div>
     </el-dialog>
+
+    <!--图片选择-->
     <el-dialog :visible.sync="imageDialogVisible">
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
@@ -226,7 +240,8 @@
         size: 'small',
 
         filters: {
-          name: ''
+          name: '',
+
         },
 
         columns: [
@@ -251,6 +266,7 @@
           {prop:"lastUpdateTime", label:"更新时间", minWidth:100},
         ],
 
+        // 分页信息
         pageRequest: { pageNum: 1, pageSize: 10 },
         pageResult: {},
 
@@ -360,7 +376,7 @@
 
         dateTimePickerOptions: {
           disabledDate(time) {
-            return time.getTime() <= Date.now();
+            return time.getTime <= Date.now();
           },
           // shortcuts: [{
           //   text: '今天',
@@ -417,14 +433,35 @@
         if(data !== null) {
           this.pageRequest = data.pageRequest
         }
-        this.pageRequest.columnFilters = {label: {name:'label', value:this.filters.label}}
+        this.pageRequest.columnFilters = {
+          userName: {userName:'userName', value:sessionStorage.getItem("user")},
+          expName: {expName:'expName', value:this.filters.name},
+        }
         this.$api.exp.findPage(this.pageRequest).then((res) => {
           this.pageResult = res.data
         }).then(data!=null?data.callback:'')
       },
       // 批量删除
-      handleDelete: function (data) {
-        this.$api.exp.batchDelete(data.params).then(data!=null?data.callback:'')
+      handleDelete: function (index) {
+        this.delete(index)
+      },
+      delete: function (index) {
+        this.$confirm("确认删除选中实验吗？", "提示", {
+          type: "warning"
+        }).then(() => {
+          this.loading = true
+          let params = []
+          params.push({'id': this.pageResult.content[index].id})
+          this.$api.exp.batchDelete(params).then( res => {
+            if(res.code == 200) {
+              this.$message({message: '删除成功', type: 'success'})
+              this.findPage(null)
+            } else {
+              this.$message({message: '操作失败, ' + res.msg, type: 'error'})
+            }
+            this.loading = false
+          })
+        })
       },
       // 显示新增实验界面
       handleAdd: function() {
@@ -444,9 +481,28 @@
       },
       // 显示编辑界面
       handleEdit: function (params) {
-        this.editDialogVisible = true
+        this.dataFormFormat(params)
+        this.dialogVisible = true
         this.operation = false
-        this.dataForm = Object.assign({}, params.row)
+      },
+      dataFormFormat(exp) {
+        this.dataForm.id = exp.id
+        this.dataForm.name = exp.name
+        this.dataForm.status = exp.status
+        this.dataForm.types = JSON.parse( exp.types.replace(/\\'/g,"\""))
+        this.dataForm.payment = JSON.parse( exp.payment.replace(/\\'/g,"\""))
+        this.dataForm.contact = exp.contact
+        this.dataForm.peopleNum = exp.peopleNum
+        this.dataForm.location = exp.location
+        this.dataForm.content = exp.content
+        this.dataForm.time = JSON.parse( exp.time.replace(/\\'/g,"\""))
+        this.dataForm.duration = exp.duration
+        this.dataForm.requirements = JSON.parse( exp.requirements.replace(/\\'/g,"\""))
+        this.dataForm.preferences = JSON.parse( exp.preferences.replace(/\\'/g,"\""))
+        this.dataForm.questionnaireType = exp.questionnaireType
+        this.dataForm.questionnaireId = exp.questionnaireId
+        this.dataForm.fileList = JSON.parse( exp.fileList.replace(/\\'/g,"\""))
+        this.dataForm.note = exp.note
       },
       // 实验种类过滤
       checkSelectedTypes: function(rule, value, callback) {
@@ -456,10 +512,6 @@
             callback(new Error('每个实验类型长度不大于10'));
         }
         callback()
-      },
-      // 时间格式化
-      dateFormat: function (row, column, cellValue, index){
-        return format(row[column.property])
       },
       // // 实验报酬上限验证（这里采用了自定义验证，也可以规则中用field属性使用对象的嵌套验证）
       // checkPayment: function(rule, value, callback) {
@@ -550,6 +602,15 @@
           });
         }
       },
+      // 时间格式化
+      dateFormatter: function (value){
+        return format(value)
+      },
+      // 换页刷新
+      refreshPageRequest: function (pageNum) {
+        this.pageRequest.pageNum = pageNum
+        this.findPage(null)
+      },
       // 文件上传，暂时不作实现
       // previewImageFile(file) {
       //   this.dialogImageUrl = file.url
@@ -589,7 +650,6 @@
       //
       //   return isPG && isLt500KB
       // },
-
     },
     mounted() {
       this.findPage(null)

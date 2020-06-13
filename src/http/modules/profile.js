@@ -29,12 +29,3 @@ export const getExpStatData = (params) => {
   })
 };
 
-
-// 分页查询
-export const findPage = (data) => {
-  return axios({
-    url: '/funExp/findPage',
-    method: 'post',
-    data
-  })
-}
