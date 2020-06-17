@@ -22,6 +22,15 @@ export const batchDelete = (data) => {
   })
 }
 
+// 删除已报名的被试
+export const batchPeoDelete = (data) => {
+  return axios({
+    url: '/funExp/deletePeo',
+    method: 'post',
+    data
+  })
+}
+
 // 分页查询
 export const findPage = (data) => {
   return axios({
@@ -37,6 +46,15 @@ export const findExpUsers = (params) => {
     url: '/funExp/findExpUsers',
     method: 'get',
     params
+  })
+}
+
+// 查询实验用户集合
+export const findExpUsersPage = (data) => {
+  return axios({
+    url: '/funExp/findExpUsersPage',
+    method: 'post',
+    data
   })
 }
 

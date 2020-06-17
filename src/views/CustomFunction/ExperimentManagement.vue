@@ -10,7 +10,7 @@
           <kt-button icon="fa fa-search" :label="$t('action.search')" perms="fun:subject:viewexp" type="primary" @click="findPage(null)"/>
         </el-form-item>
         <el-form-item>
-          <kt-button icon="fa fa-plus" label="新增实验" perms="fun:subject:addexp" type="primary" @click="handleAdd" />
+          <kt-button icon="fa fa-plus" :label="$t('action.addexp')" perms="fun:subject:addexp" type="primary" @click="handleAdd" />
         </el-form-item>
       </el-form>
     </div>
@@ -26,7 +26,7 @@
     <!-- 卡片 -->
     <el-col :gutter="20">
       <el-card class="box-card" shadow="hover" v-for="(exp, index) in pageResult.content" :key="index"
-               @click.native="handleEdit(exp)" :size="size">
+               :size="size">
         <div slot="header" class="clearfix">
           <span>{{exp.name}}</span>
           <div class="state">
@@ -40,11 +40,17 @@
         </div>
         <el-row class="card-button">
           <kt-button icon="el-icon-edit" :label="$t('action.edit')" type="text"
-                     style="color: #409EFF" perms="fun:subject:editexp" @click="handleEdit(exp)">编辑</kt-button>
+                     style="color: #409EFF" perms="fun:subject:editexp" @click="handleEdit(exp)"></kt-button>
+          <kt-button v-if="exp.status === 1" icon="el-icon-open" :label="$t('action.startPublishing')" type="text"
+                     style="color: #909399" perms="fun:subject:editexp" @click="handlePublish(exp)"></kt-button>
+          <kt-button v-if="exp.status === 2" icon="el-icon-turn-off" :label="$t('action.stopPublishing')" type="text"
+                     style="color: #E6A23C" perms="fun:subject:editexp" @click="handlePublish(exp)"></kt-button>
+          <kt-button icon="el-icon-user" :label="$t('action.checkRegistration')" type="text"
+                     style="color: #C71585" perms="fun:subject:viewpeo" @click="handleCheckRegistration(exp)"></kt-button>
           <kt-button icon="el-icon-share" :label="$t('action.share')" type="text"
                      style="color: #67C23A" disabled>分享</kt-button>
           <kt-button icon="el-icon-delete" :label="$t('action.delete')" type="text"
-                     style="color: #F56C6C" perms="fun:subject:deleteexp" @click="handleDelete(index)">删除</kt-button>
+                     style="color: #F56C6C" perms="fun:subject:deleteexp" @click="handleDelete(index)"></kt-button>
         </el-row>
 <!--        <div v-for="o in 4" :key="o" class="text item">-->
 <!--          {{'列表内容 ' + o }}-->
@@ -221,6 +227,14 @@
     <el-dialog :visible.sync="imageDialogVisible">
       <img width="100%" :src="dialogImageUrl" alt="">
     </el-dialog>
+
+    <!--报名情况-->
+    <el-dialog :visible.sync="registDialogVisible">
+      <kt-table :height="375" permsEdit="fun:subject:editexp" permsDelete="fun:subject:editexp"
+                :data="pagePeoResult" :columns="filterColumns"
+                @findPage="findPeoPage" @handleDelete="handlePeoDelete">
+      </kt-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -241,34 +255,13 @@
 
         filters: {
           name: '',
-
         },
-
-        columns: [
-          {prop:"id", label:"编号", minWidth:20},
-          {prop:"name", label:"实验名称", minWidth:100},
-          {prop:"status", label:"实验状态 0：审核中 1：未发布 2：发布中 3：已结束", minWidth:100},
-          {prop:"types", label:"实验类型", minWidth:100},
-          {prop:"payment", label:"实验报酬", minWidth:100},
-          {prop:"contact", label:"联系方式", minWidth:100},
-          {prop:"peopleNum", label:"实验人数", minWidth:100},
-          {prop:"location", label:"实验地点", minWidth:100},
-          {prop:"content", label:"实验内容", minWidth:100},
-          {prop:"time", label:"实验时间段", minWidth:100},
-          {prop:"requirements", label:"实验要求", minWidth:100},
-          {prop:"preferences", label:"实验偏好", minWidth:100},
-          {prop:"questionnaireId", label:"问卷ID", minWidth:100},
-          {prop:"fileList", label:"图片", minWidth:100},
-          {prop:"note", label:"备注", minWidth:100},
-          {prop:"createBy", label:"创建人", minWidth:100},
-          {prop:"createTime", label:"创建时间", minWidth:100},
-          {prop:"lastUpdateBy", label:"更新人", minWidth:100},
-          {prop:"lastUpdateTime", label:"更新时间", minWidth:100},
-        ],
 
         // 分页信息
         pageRequest: { pageNum: 1, pageSize: 10 },
         pageResult: {},
+        pagePeoRequest: { pageNum: 1, pageSize: 10 , columnFilters: null},
+        pagePeoResult: {},
 
         dataFormRules: {
           name: [
@@ -332,6 +325,7 @@
 
         operation: false, // true:新增, false:编辑
         dialogVisible: false, // 新增编辑界面是否显示
+        registDialogVisible: false, // 报名情况界面是否显示
         editLoading: false,
 
         // 新增实验界面数据
@@ -425,6 +419,11 @@
 
         dialogImageUrl: '',
         imageDialogVisible: false,
+
+        selectedExpId: null, // 选择报名情况的实验
+
+        columns: [],  // 报名情况列
+        filterColumns: [],  // 报名情况过滤列
       }
     },
     methods: {
@@ -439,6 +438,18 @@
         }
         this.$api.exp.findPage(this.pageRequest).then((res) => {
           this.pageResult = res.data
+        }).then(data!=null?data.callback:'')
+      },
+      // 获取报名分页数据
+      findPeoPage: function (data) {
+        // if(data !== null) {
+        //   this.pagePeoRequest = data.pagePeoRequest
+        // }
+        this.pagePeoRequest.columnFilters = {
+          expId: {expId:'expId', value:this.selectedExpId}
+        }
+        this.$api.exp.findExpUsersPage(this.pagePeoRequest).then((res) => {
+          this.pagePeoResult = res.data;
         }).then(data!=null?data.callback:'')
       },
       // 批量删除
@@ -484,6 +495,36 @@
         this.dataFormFormat(params)
         this.dialogVisible = true
         this.operation = false
+      },
+      // 显示发布提示
+      handlePublish: function (params) {
+        var currentStatus = params.status
+        var nextStatus = currentStatus == 1 ? 2 : 1
+        var text = currentStatus == 1 ? "确认开始发布实验吗？": "确认停止发布实验吗？"
+        this.$confirm(text, "提示", {
+          type: "warning"
+        }).then(() => {
+          params.status = nextStatus
+          this.$api.exp.save(params).then((res) => {
+            if(res.code == 200) {
+              this.$message({ message: '操作成功', type: 'success' })
+              this.$refs['dataForm'].resetFields()
+            } else {
+              this.$message({message: '操作失败, ' + res.msg, type: 'error'})
+            }
+            this.findPage(null)
+          })
+        })
+      },
+      // 显示报名情况
+      handleCheckRegistration: function (params) {
+        this.registDialogVisible = true
+        this.selectedExpId = params.id
+        this.findPeoPage(null)
+      },
+      // 删除报名的被试
+      handlePeoDelete: function (data) {
+        this.$api.exp.batchPeoDelete(data.params).then(data!=null?data.callback:'')
       },
       dataFormFormat(exp) {
         this.dataForm.id = exp.id
@@ -602,9 +643,13 @@
           });
         }
       },
-      // 时间格式化
+      // 卡片时间格式化
       dateFormatter: function (value){
         return format(value)
+      },
+      // 表格时间格式化
+      dateFormat: function (row, column, cellValue, index){
+        return format(row[column.property])
       },
       // 换页刷新
       refreshPageRequest: function (pageNum) {
@@ -650,9 +695,20 @@
       //
       //   return isPG && isLt500KB
       // },
+      // 处理表格列过滤显示
+      initColumns: function () {
+        this.columns = [
+          {prop:"name", label:"用户名", minWidth:100},
+          {prop:"email", label:"邮箱", minWidth:120},
+          {prop:"mobile", label:"手机", minWidth:120},
+          {prop:"createTime", label:"报名时间", minWidth:100, formatter:this.dateFormat},
+        ]
+        this.filterColumns = JSON.parse(JSON.stringify(this.columns));
+      }
     },
     mounted() {
       this.findPage(null)
+      this.initColumns()
     }
   }
 </script>

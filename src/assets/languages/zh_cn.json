@@ -26,7 +26,11 @@
     "share": "分享",
     "confirm": "确定",
     "cancel": "取消",
-    "reset": "重置"
+    "reset": "重置",
+    "addexp": "新增实验",
+    "startPublishing": "开始发布",
+    "stopPublishing": "停止发布",
+    "checkRegistration": "查看报名情况"
   },
   "sys": {
     "sysMng": "系统管理",
