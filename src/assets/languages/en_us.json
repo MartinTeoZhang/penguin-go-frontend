@@ -30,7 +30,9 @@
     "addexp": "Add Experiment",
     "startPublishing": "Start Publishing",
     "stopPublishing": "Stop Publishing",
-    "checkRegistration": "Check Registration"
+    "checkRegistration": "Check Registration",
+    "cancelRegistration": "Cancel Registration",
+    "viewDetail": "View Detail"
   },
   "sys": {
     "sysMng": "System Manage",

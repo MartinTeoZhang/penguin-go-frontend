@@ -7,10 +7,7 @@
           <el-input v-model="filters.name" placeholder="实验名"></el-input>
         </el-form-item>
         <el-form-item>
-          <kt-button icon="fa fa-search" :label="$t('action.search')" perms="fun:exper:viewexp" type="primary" @click="findPage(null)"/>
-        </el-form-item>
-        <el-form-item>
-          <kt-button icon="fa fa-plus" :label="$t('action.addexp')" perms="fun:exper:addexp" type="primary" @click="handleAdd" />
+          <kt-button icon="fa fa-search" :label="$t('action.search')" perms="fun:subject:viewexp" type="primary" @click="findPage(null)"/>
         </el-form-item>
       </el-form>
     </div>
@@ -39,36 +36,21 @@
           </div>
         </div>
         <el-row class="card-button">
-          <kt-button icon="el-icon-edit" :label="$t('action.edit')" type="text"
-                     style="color: #409EFF" perms="fun:exper:editexp" @click="handleEdit(exp)"></kt-button>
-          <kt-button v-if="exp.status === 1" icon="el-icon-open" :label="$t('action.startPublishing')" type="text"
-                     style="color: #909399" perms="fun:exper:editexp" @click="handlePublish(exp)"></kt-button>
-          <kt-button v-if="exp.status === 2" icon="el-icon-turn-off" :label="$t('action.stopPublishing')" type="text"
-                     style="color: #E6A23C" perms="fun:exper:editexp" @click="handlePublish(exp)"></kt-button>
-          <kt-button icon="el-icon-user" :label="$t('action.checkRegistration')" type="text"
-                     style="color: #C71585" perms="fun:exper:viewpeo" @click="handleCheckRegistration(exp)"></kt-button>
-          <kt-button icon="el-icon-share" :label="$t('action.share')" type="text"
-                     style="color: #67C23A" disabled>分享</kt-button>
-          <kt-button icon="el-icon-delete" :label="$t('action.delete')" type="text"
-                     style="color: #F56C6C" perms="fun:exper:deleteexp" @click="handleDelete(index)"></kt-button>
+          <kt-button icon="el-icon-user" :label="$t('action.viewDetail')" type="text"
+                     style="color: #409EFF" perms="fun:subject:viewexp" @click="handleView(exp)"></kt-button>
+          <kt-button icon="el-icon-delete" :label="$t('action.cancelRegistration')" type="text"
+                     style="color: #F56C6C" perms="fun:subject:cancelregist" @click="handleCancel(index)"></kt-button>
         </el-row>
-<!--        <div v-for="o in 4" :key="o" class="text item">-->
-<!--          {{'列表内容 ' + o }}-->
-<!--        </div>-->
+        <!--        <div v-for="o in 4" :key="o" class="text item">-->
+        <!--          {{'列表内容 ' + o }}-->
+        <!--        </div>-->
       </el-card>
-
     </el-col>
 
-<!--    &lt;!&ndash;表格内容栏&ndash;&gt;-->
-<!--    <kt-table :height="1000" permsEdit="sys:funExp:edit" permsDelete="sys:funExp:delete"-->
-<!--              :data="pageResult" :columns="columns"-->
-<!--              @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">-->
-<!--    </kt-table>-->
-
-    <!--新增编辑界面-->
-    <el-dialog :title="operation?'新增':'编辑'" width="50%" :visible.sync="dialogVisible" :close-on-click-modal="false">
+    <!--查看实验界面-->
+    <el-dialog title="实验详情" width="50%" :visible.sync="dialogVisible" :close-on-click-modal="false">
       <el-form :model="dataForm" label-width="80px" :rules="dataFormRules" ref="dataForm" :size="size"
-               label-position="right">
+               label-position="right" disabled>
         <el-form-item label="ID" prop="id" v-if="false">
           <el-input v-model="dataForm.id" :disabled="true" auto-complete="off"></el-input>
         </el-form-item>
@@ -178,12 +160,12 @@
           </el-select>
         </el-form-item>
         <el-form-item label="实验偏好" prop="preferences">
-            <el-checkbox-group v-model="dataForm.preferences" style="text-align: left">
-              <el-checkbox label="提交后直接发布" name="type" checked></el-checkbox>
-              <el-checkbox label="人数到达上限时停止发布" name="type"></el-checkbox>
-              <el-checkbox label="排除职业被试" name="type"></el-checkbox>
-              <el-checkbox label="排除低分被试" name="type"></el-checkbox>
-            </el-checkbox-group>
+          <el-checkbox-group v-model="dataForm.preferences" style="text-align: left">
+            <el-checkbox label="提交后直接发布" name="type" checked></el-checkbox>
+            <el-checkbox label="人数到达上限时停止发布" name="type"></el-checkbox>
+            <el-checkbox label="排除职业被试" name="type"></el-checkbox>
+            <el-checkbox label="排除低分被试" name="type"></el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
         <el-form-item label="填写问卷" prop="questionnaireId">
           <el-input placeholder="问卷ID" v-model="dataForm.questionnaireId" class="input-with-select" maxlength="8" show-word-limit>
@@ -192,54 +174,37 @@
             </el-select>
           </el-input>
         </el-form-item>
-<!--        <el-form-item label="上传图片" prop="fileList" style="text-align: left">-->
-<!--          <el-upload-->
-<!--            class="uploadFile"-->
-<!--            action="http://localhost:8001/posts/"-->
-<!--            v-if="this.dataForm.fileList.length<5"-->
-<!--            :on-preview="previewImageFile"-->
-<!--            :on-remove="removeImageFile"-->
-<!--            :on-success="successImageFile"-->
-<!--            :before-upload="beforeImageFileUpload"-->
-<!--            :file-list="dataForm.fileList"-->
-<!--            ref="upload"-->
-<!--            :auto-upload="true"-->
-<!--            drag-->
-<!--            :limit="this.multiLimit"-->
-<!--            list-type="picture"-->
-<!--            style="width: 100%">-->
-<!--            <i class="el-icon-upload"></i>-->
-<!--            <div class="el-upload__text" style="justify-content: center">将文件拖到此处，或<em>点击上传</em></div>-->
-<!--            <div class="el-upload__tip" slot="tip">只能上传5个jpg/png文件，且不超过500kb（第一张为实验封面）</div>-->
-<!--          </el-upload>-->
-<!--        </el-form-item>-->
+        <!--        <el-form-item label="上传图片" prop="fileList" style="text-align: left">-->
+        <!--          <el-upload-->
+        <!--            class="uploadFile"-->
+        <!--            action="http://localhost:8001/posts/"-->
+        <!--            v-if="this.dataForm.fileList.length<5"-->
+        <!--            :on-preview="previewImageFile"-->
+        <!--            :on-remove="removeImageFile"-->
+        <!--            :on-success="successImageFile"-->
+        <!--            :before-upload="beforeImageFileUpload"-->
+        <!--            :file-list="dataForm.fileList"-->
+        <!--            ref="upload"-->
+        <!--            :auto-upload="true"-->
+        <!--            drag-->
+        <!--            :limit="this.multiLimit"-->
+        <!--            list-type="picture"-->
+        <!--            style="width: 100%">-->
+        <!--            <i class="el-icon-upload"></i>-->
+        <!--            <div class="el-upload__text" style="justify-content: center">将文件拖到此处，或<em>点击上传</em></div>-->
+        <!--            <div class="el-upload__tip" slot="tip">只能上传5个jpg/png文件，且不超过500kb（第一张为实验封面）</div>-->
+        <!--          </el-upload>-->
+        <!--        </el-form-item>-->
         <el-form-item label="备注" prop="note">
           <el-input type="textarea" v-model="dataForm.note" maxlength="999" show-word-limit :rows="5"></el-input>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button :size="size" @click.native="dialogVisible = false">{{$t('action.cancel')}}</el-button>
-        <el-button :size="size" type="primary" @click.native="submitForm" :loading="editLoading">{{$t('action.submit')}}</el-button>
-      </div>
     </el-dialog>
 
-    <!--图片选择-->
-    <el-dialog :visible.sync="imageDialogVisible">
-      <img width="100%" :src="dialogImageUrl" alt="">
-    </el-dialog>
-
-    <!--报名情况-->
-    <el-dialog :visible.sync="registDialogVisible">
-      <kt-table :height="375" permsEdit="fun:exper:editexp" permsDelete="fun:exper:editexp"
-                :data="pagePeoResult" :columns="filterColumns"
-                @findPage="findPeoPage" @handleDelete="handlePeoDelete">
-      </kt-table>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-  import KtTable from "@/views/Core/KtTable"
   import KtButton from "@/views/Core/KtButton"
   import { format } from "@/utils/datetime"
   import {isBtwZeroToTenThousand, isInteger} from '../../utils/validate'
@@ -247,7 +212,6 @@
   export default {
     components:{
       KtButton,
-      KtTable,
     },
     data() {
       return {
@@ -260,8 +224,6 @@
         // 分页信息
         pageRequest: { pageNum: 1, pageSize: 10 },
         pageResult: {},
-        pagePeoRequest: { pageNum: 1, pageSize: 10 , columnFilters: null},
-        pagePeoResult: {},
 
         dataFormRules: {
           name: [
@@ -280,9 +242,9 @@
               trigger: 'blur',
               fields: {
                 paymentMin: [{ required: true, message: '请输入实验报酬下限', trigger: 'blur'},
-                              {validator: this.checkPayment, trigger: 'blur'}],
+                  {validator: this.checkPayment, trigger: 'blur'}],
                 paymentMax: [{ required: true, message: '请输入实验报酬上限', trigger: 'blur'},
-                              { validator: this.checkPayment, trigger: 'blur'}]
+                  { validator: this.checkPayment, trigger: 'blur'}]
               }
             }
           ],
@@ -323,10 +285,7 @@
           note: { maxLength: 999, message: '长度在999个字符内', trigger: 'blur' }
         },
 
-        operation: false, // true:新增, false:编辑
         dialogVisible: false, // 新增编辑界面是否显示
-        registDialogVisible: false, // 报名情况界面是否显示
-        editLoading: false,
 
         // 新增实验界面数据
         dataForm: {
@@ -372,26 +331,6 @@
           disabledDate(time) {
             return time.getTime <= Date.now();
           },
-          // shortcuts: [{
-          //   text: '今天',
-          //   onClick(picker) {
-          //     picker.$emit('pick', new Date());
-          //   }
-          // }, {
-          //   text: '昨天',
-          //   onClick(picker) {
-          //     const date = new Date();
-          //     date.setTime(date.getTime() - 3600 * 1000 * 24);
-          //     picker.$emit('pick', date);
-          //   }
-          // }, {
-          //   text: '一周前',
-          //   onClick(picker) {
-          //     const date = new Date();
-          //     date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-          //     picker.$emit('pick', date);
-          //   }
-          // }]
         },
 
         requirementOptions: [{
@@ -420,10 +359,6 @@
         dialogImageUrl: '',
         imageDialogVisible: false,
 
-        selectedExpId: null, // 选择报名情况的实验
-
-        columns: [],  // 报名情况列
-        filterColumns: [],  // 报名情况过滤列
       }
     },
     methods: {
@@ -434,38 +369,28 @@
         }
         this.pageRequest.columnFilters = {
           userName: {userName:'userName', value:sessionStorage.getItem("user")},
-          expName: {expName:'expName', value:this.filters.name},
         }
-        this.$api.exp.findPage(this.pageRequest).then((res) => {
+        this.$api.exp.findPageByUserName(this.pageRequest).then((res) => {
           this.pageResult = res.data
+          console.log(this.pageResult)
         }).then(data!=null?data.callback:'')
       },
-      // 获取报名分页数据
-      findPeoPage: function (data) {
-        // if(data !== null) {
-        //   this.pagePeoRequest = data.pagePeoRequest
-        // }
-        this.pagePeoRequest.columnFilters = {
-          expId: {expId:'expId', value:this.selectedExpId}
-        }
-        this.$api.exp.findExpUsersPage(this.pagePeoRequest).then((res) => {
-          this.pagePeoResult = res.data;
-        }).then(data!=null?data.callback:'')
+      // 删除
+      handleCancel: function (index) {
+        this.cancel(index)
       },
-      // 单个删除
-      handleDelete: function (index) {
-        this.delete(index)
-      },
-      delete: function (index) {
-        this.$confirm("确认删除选中实验吗？", "提示", {
+      cancel: function (index) {
+        this.$confirm("确认取消报名选中实验吗？", "提示", {
           type: "warning"
         }).then(() => {
           this.loading = true
-          let params = []
-          params.push({'id': this.pageResult.content[index].id})
-          this.$api.exp.batchDelete(params).then( res => {
+          let params = {
+            expId: this.pageResult.content[index].id,
+            createBy: sessionStorage.getItem("user")
+          }
+          this.$api.exp.deletePeoByExpIdAndUserName(params).then( res => {
             if(res.code == 200) {
-              this.$message({message: '删除成功', type: 'success'})
+              this.$message({message: '取消成功', type: 'success'})
               this.findPage(null)
             } else {
               this.$message({message: '操作失败, ' + res.msg, type: 'error'})
@@ -474,57 +399,11 @@
           })
         })
       },
-      // 显示新增实验界面
-      handleAdd: function() {
-        this.dialogVisible = true
-        this.operation = true
-        // this.dataForm = {
-        //   id: 0,
-        //   name: '',
-        //   password: '',
-        //   deptId: 1,
-        //   deptName: '',
-        //   email: 'test@qq.com',
-        //   mobile: '13889700023',
-        //   status: 1,
-        //   userRoles: []
-        // }
-      },
       // 显示编辑界面
-      handleEdit: function (params) {
+      handleView: function (params) {
         this.dataFormFormat(params)
         this.dialogVisible = true
         this.operation = false
-      },
-      // 显示发布提示
-      handlePublish: function (params) {
-        var currentStatus = params.status
-        var nextStatus = currentStatus == 1 ? 2 : 1
-        var text = currentStatus == 1 ? "确认开始发布实验吗？": "确认停止发布实验吗？"
-        this.$confirm(text, "提示", {
-          type: "warning"
-        }).then(() => {
-          params.status = nextStatus
-          this.$api.exp.save(params).then((res) => {
-            if(res.code == 200) {
-              this.$message({ message: '操作成功', type: 'success' })
-              this.$refs['dataForm'].resetFields()
-            } else {
-              this.$message({message: '操作失败, ' + res.msg, type: 'error'})
-            }
-            this.findPage(null)
-          })
-        })
-      },
-      // 显示报名情况
-      handleCheckRegistration: function (params) {
-        this.registDialogVisible = true
-        this.selectedExpId = params.id
-        this.findPeoPage(null)
-      },
-      // 删除报名的被试
-      handlePeoDelete: function (data) {
-        this.$api.exp.batchPeoDelete(data.params).then(data!=null?data.callback:'')
       },
       dataFormFormat(exp) {
         this.dataForm.id = exp.id
@@ -592,41 +471,8 @@
       checkFileList: function(rule, value, callback) {
         // console.log(val)
         if (value.length > 5)
-            callback(new Error('最多只能上传5张图片'));
+          callback(new Error('最多只能上传5张图片'));
         callback()
-      },
-      // 编辑
-      submitForm: function () {
-        this.$refs.dataForm.validate((valid) => {
-          if (valid) {
-            this.$confirm('确认提交吗？', '提示', {}).then(() => {
-              this.editLoading = true
-              let params = Object.assign({}, this.dataForm)
-              // this.$refs.upload.submit(); // 上传文件
-
-              // （可能需要注意双引号无法正确识别的问题 https://www.cnblogs.com/wangyunjie/p/5826676.html）
-              params.types = JSON.stringify(params.types).replace(/\"/g, "\\'")
-              params.payment = JSON.stringify(params.payment).replace(/\"/g, "\\'")
-              params.requirements = JSON.stringify(params.requirements).replace(/\"/g, "\\'")
-              params.time = JSON.stringify(params.time).replace(/\"/g, "\\'")
-              params.preferences = JSON.stringify(params.preferences).replace(/\"/g, "\\'")
-              params.fileList = JSON.stringify(params.fileList).replace(/\"/g, "\\'")
-
-              // console.log(params)
-              this.$api.exp.save(params).then((res) => {
-                this.editLoading = false
-                if(res.code == 200) {
-                  this.$message({ message: '操作成功', type: 'success' })
-                  this.dialogVisible = false
-                  this.$refs['dataForm'].resetFields()
-                } else {
-                  this.$message({message: '操作失败, ' + res.msg, type: 'error'})
-                }
-                this.findPage(null)
-              })
-            })
-          }
-        })
       },
       removeDateTimePicker(item) {
         var index = this.dataForm.time.indexOf(item)
@@ -656,59 +502,10 @@
         this.pageRequest.pageNum = pageNum
         this.findPage(null)
       },
-      // 文件上传，暂时不作实现
-      // previewImageFile(file) {
-      //   this.dialogImageUrl = file.url
-      //   this.imageDialogVisible = true
-      // },
-      // removeImageFile(file, fileList) {
-      //   this.dataForm.fileList = fileList
-      //   // 文件删除后也要触发验证,validateField是触发部分验证的方法,参数是prop设置的值
-      //   this.$refs.dataForm.validateField('fileList')
-      // },
-      // successImageFile(res, file, fileList) { // 图片上传
-      //   // 这里可以写文件上传成功后的处理,但是一定要记得给fileList赋值
-      //   this.dataForm.fileList.push(file)
-      //   // 文件上传后不会触发form表单的验证,要手动添加验证
-      //   this.$refs.dataForm.validateField('fileList')
-      // },
-      // beforeImageFileUpload: function(file) {
-      //   // console.log(file)
-      //   const isJPG = file.type === 'image/jpeg';
-      //   const isPNG = file.type === 'image/png';
-      //   const isPG = (isJPG || isPNG)  //限制图片格式为jpg/png
-      //   const isLt500KB = file.size / 1024 / 1024 < 0.5; //限制图片大小
-      //
-      //   if(!isPG) {
-      //     this.$message({
-      //       message: '上传的文件只能是jpg/png格式',
-      //       type: 'warning'
-      //     });
-      //   }
-      //
-      //   if(!isLt500KB) {
-      //     this.$message({
-      //       message: '上传的文件大小不能超过500kb',
-      //       type: 'warning'
-      //     });
-      //   }
-      //
-      //   return isPG && isLt500KB
-      // },
-      // 处理表格列过滤显示
-      initColumns: function () {
-        this.columns = [
-          {prop:"name", label:"用户名", minWidth:100},
-          {prop:"email", label:"邮箱", minWidth:120},
-          {prop:"mobile", label:"手机", minWidth:120},
-          {prop:"createTime", label:"报名时间", minWidth:100, formatter:this.dateFormat},
-        ]
-        this.filterColumns = JSON.parse(JSON.stringify(this.columns));
-      }
+
     },
     mounted() {
       this.findPage(null)
-      this.initColumns()
     }
   }
 </script>

@@ -30,7 +30,9 @@
     "addexp": "新增实验",
     "startPublishing": "开始发布",
     "stopPublishing": "停止发布",
-    "checkRegistration": "查看报名情况"
+    "checkRegistration": "查看报名情况",
+    "cancelRegistration": "取消报名",
+    "viewDetail": "查看详情"
   },
   "sys": {
     "sysMng": "系统管理",
