@@ -36,6 +36,8 @@
           </div>
         </div>
         <el-row class="card-button">
+          <kt-button icon="el-icon-s-check" :label="$t('action.viewProgress')" type="text"
+                     style="color: #E6A23C" perms="fun:subject:viewexp" @click="handleProgress(index)"></kt-button>
           <kt-button icon="el-icon-user" :label="$t('action.viewDetail')" type="text"
                      style="color: #409EFF" perms="fun:subject:viewexp" @click="handleView(exp)"></kt-button>
           <kt-button icon="el-icon-delete" :label="$t('action.cancelRegistration')" type="text"
@@ -201,6 +203,17 @@
       </el-form>
     </el-dialog>
 
+    <!--被试报名状态查看-->
+    <el-dialog title="查看被试报名状态" :visible.sync="statusDialogVisible">
+      <div>
+        <el-radio-group v-model="radioStatus" :size=size>
+          <!--TODO v-for v-if不要一起用，先搁置-->
+          <!--TOOD 希望增加一个filter，使radio group只能向前选择，之前的radio disabled-->
+          <el-radio-button v-for="(value, index) in this.radioStatusList" :key="index"
+                           :label="value" v-if="index < 4" disabled></el-radio-button>
+        </el-radio-group>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -359,6 +372,9 @@
         dialogImageUrl: '',
         imageDialogVisible: false,
 
+        statusDialogVisible: false,
+        radioStatusList: ["未处理", "已预约", "进行中", "已结束", "已取消", "未知"],
+        radioStatus: "",
       }
     },
     methods: {
@@ -370,7 +386,7 @@
         this.pageRequest.columnFilters = {
           userName: {userName:'userName', value:sessionStorage.getItem("user")},
         }
-        this.$api.exp.findPageByUserName(this.pageRequest).then((res) => {
+        this.$api.exp.findSubjectPageByUserName(this.pageRequest).then((res) => {
           this.pageResult = res.data
           console.log(this.pageResult)
         }).then(data!=null?data.callback:'')
@@ -388,7 +404,7 @@
             expId: this.pageResult.content[index].id,
             createBy: sessionStorage.getItem("user")
           }
-          this.$api.exp.deletePeoByExpIdAndUserName(params).then( res => {
+          this.$api.exp.deletePeoByExpIdAndUserName(params).then((res) => {
             if(res.code == 200) {
               this.$message({message: '取消成功', type: 'success'})
               this.findPage(null)
@@ -404,6 +420,17 @@
         this.dataFormFormat(params)
         this.dialogVisible = true
         this.operation = false
+      },
+      // 显示报名状态界面
+      handleProgress: function (index) {
+        let params = {
+          expId: this.pageResult.content[index].id,
+          userName: sessionStorage.getItem("user")
+        }
+        this.$api.exp.findExpUserByExpIdAndUserName(params).then((res) => {
+          this.radioStatus = this.radioStatusList[res.data.status % this.radioStatusList.length]
+        })
+        this.statusDialogVisible = true
       },
       dataFormFormat(exp) {
         this.dataForm.id = exp.id

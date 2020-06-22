@@ -202,7 +202,7 @@
         this.clickedExp = exp
         this.clickedExpIndex = index
       },
-      saveExpUser: function(){
+      saveSubject: function(){
         let expUser = {id: 0, expId: this.clickedExp.id, userId: this.userId}
         this.$api.exp.saveExpUser(expUser).then((res) => {
           this.editLoading = false
@@ -226,7 +226,7 @@
               return
             }
           }
-          this.saveExpUser()
+          this.saveSubject()
         })
       },
       //判断报名人数是否满了

@@ -408,7 +408,7 @@
             this.$message('邮箱长度过短');
           }else {
             this.$api.user.save({id: this.dataForm.id, email: this.email_change_input}).then((res) => {
-              if(res.code === 200) {
+              if(res.code == 200) {
                 this.$message({ message: '操作成功', type: 'success' });
                 this.email_button_disable = true;
                 this.dataForm.email = this.email_change_input;
@@ -429,8 +429,8 @@
           }else if (this.pwd_change_new_input != this.pwd_change_new_check_input){
             this.$message({message: '两次输入的密码不一致', type: 'error'})
           }else{
-            this.$api.profile.updatePwd({id: this.dataForm.id, oldPwd: this.pwd_change_raw_input ,newPwd: this.pwd_change_new_input}).then((res)=>{
-              if(res.code === 200) {
+            this.$api.profile.updatePwd({id: this.dataForm.id, oldPwd: this.pwd_change_raw_input, newPwd: this.pwd_change_new_input}).then((res)=>{
+              if(res.code == 200) {
                 this.$message({ message: '操作成功', type: 'success' });
                 this.pwdDialogVisible = false;
               } else {

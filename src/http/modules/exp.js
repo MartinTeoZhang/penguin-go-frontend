@@ -58,6 +58,24 @@ export const findExpUsers = (params) => {
   })
 }
 
+// 查询实验被试
+export const findExpUserById = (params) => {
+  return axios({
+    url: '/funExp/findExpUserById',
+    method: 'get',
+    params
+  })
+}
+
+// 查询实验被试
+export const findExpUserByExpIdAndUserName = (params) => {
+  return axios({
+    url: '/funExp/findExpUserByExpIdAndUserName',
+    method: 'post',
+    params
+  })
+}
+
 // 查询实验被试集合
 export const findExpUsersPage = (data) => {
   return axios({
@@ -68,9 +86,9 @@ export const findExpUsersPage = (data) => {
 }
 
 // 查询被试实验集合
-export const findPageByUserName = (data) => {
+export const findSubjectPageByUserName = (data) => {
   return axios({
-    url: '/funExp/findPageByUserName',
+    url: '/funExp/findSubjectPageByUserName',
     method: 'post',
     data
   })
