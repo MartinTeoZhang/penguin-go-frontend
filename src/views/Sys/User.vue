@@ -36,7 +36,7 @@
       </table-column-filter-dialog>
     </div>
     <!--表格内容栏-->
-    <kt-table :height="350" permsEdit="sys:user:edit" permsDelete="sys:user:delete"
+    <kt-table :height="375" permsEdit="sys:user:edit" permsDelete="sys:user:delete"
               :data="pageResult" :columns="filterColumns"
               @findPage="findPage" @handleEdit="handleEdit" @handleDelete="handleDelete">
     </kt-table>
@@ -145,7 +145,7 @@
         }
         this.pageRequest.columnFilters = {name: {name:'name', value:this.filters.name}}
         this.$api.user.findPage(this.pageRequest).then((res) => {
-          this.pageResult = res.data
+          this.pageResult = res.data;
           this.findUserRoles()
         }).then(data!=null?data.callback:'')
       },

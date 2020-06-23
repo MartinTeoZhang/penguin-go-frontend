@@ -50,11 +50,11 @@
       },
       maxHeight: {  // 表格最大高度
         type: Number,
-        default: 420
+        default: 1000
       },
       height: {  // 表格最大高度
         type: Number,
-        default: 250
+        default: 500
       },
       showOperation: {  // 是否显示操作组件
         type: Boolean,
@@ -95,9 +95,9 @@
     methods: {
       // 分页查询
       findPage: function () {
-        this.loading = true
+        // this.loading = true
         let callback = res => {
-          this.loading = false
+          // this.loading = false
         }
         this.$emit('findPage', {pageRequest:this.pageRequest, callback:callback})
       },
@@ -138,7 +138,7 @@
           for(var i=0; i<idArray.length; i++) {
             params.push({'id':idArray[i]})
           }
-          this.loading = true
+          // this.loading = true
           let callback = res => {
             if(res.code == 200) {
               this.$message({message: '删除成功', type: 'success'})
@@ -146,7 +146,7 @@
             } else {
               this.$message({message: '操作失败, ' + res.msg, type: 'error'})
             }
-            this.loading = false
+            // this.loading = false
           }
           this.$emit('handleDelete', {params:params, callback:callback})
         }).catch(() => {

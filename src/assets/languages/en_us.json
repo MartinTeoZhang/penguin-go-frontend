@@ -23,9 +23,18 @@
     "search": "Search",
     "loading": "loading",
     "submit": "Submit",
+    "share": "Share",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "reset": "Reset"
+    "reset": "Reset",
+    "addexp": "Add Experiment",
+    "startPublishing": "Start Publishing",
+    "stopPublishing": "Stop Publishing",
+    "checkRegistration": "Check Registration",
+    "cancelRegistration": "Cancel Registration",
+    "viewDetail": "View Detail",
+    "viewProgress": "View Progress",
+    "rateExper": "Rate Experimenter"
   },
   "sys": {
     "sysMng": "System Manage",
