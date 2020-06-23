@@ -1,5 +1,5 @@
 /*
- * 实验管理模块
+ * 实验模块
  */
 
 import axios from '../axios'
@@ -62,6 +62,15 @@ export const findExpUsers = (params) => {
 export const findExpUserById = (params) => {
   return axios({
     url: '/funExp/findExpUserById',
+    method: 'get',
+    params
+  })
+}
+
+// 查询实验主试
+export const findUserExpByExpId = (params) => {
+  return axios({
+    url: '/funExp/findUserExpByExpId',
     method: 'get',
     params
   })

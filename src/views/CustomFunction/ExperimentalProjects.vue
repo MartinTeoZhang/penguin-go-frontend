@@ -9,9 +9,6 @@
         <el-form-item>
           <kt-button icon="fa fa-search" :label="$t('action.search')" perms="sys:role:view" type="primary" @click="findPage(null)"/>
         </el-form-item>
-        <el-form-item>
-          <kt-button icon="fa fa-plus" :label="$t('action.add')" perms="sys:user:add" type="primary" @click="handleAdd" />
-        </el-form-item>
         <el-form-item label="实验时间">
           <el-select v-model="form.region" placeholder="请选择活动区域">
             <el-option label="区域一" value="shanghai"></el-option>
@@ -137,9 +134,6 @@
           this.expUserCount = []
           this.getExpUserCount()
         })
-      },
-      handleAdd: function () {
-
       },
       strToJson: function(str){
         var n = str.replace(/\\'/g,"\"")

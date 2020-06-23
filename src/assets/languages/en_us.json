@@ -33,7 +33,8 @@
     "checkRegistration": "Check Registration",
     "cancelRegistration": "Cancel Registration",
     "viewDetail": "View Detail",
-    "viewProgress": "View Progress"
+    "viewProgress": "View Progress",
+    "rateExper": "Rate Experimenter"
   },
   "sys": {
     "sysMng": "System Manage",

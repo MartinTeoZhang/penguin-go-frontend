@@ -237,18 +237,29 @@
     </el-dialog>
 
     <!--被试报名状态编辑-->
-    <el-dialog title="更改被试报名状态" :visible.sync="statusDialogVisible">
+    <el-dialog title="更改被试报名状态或评价被试" :visible.sync="statusDialogVisible">
       <div>
-        <el-radio-group v-model="radioStatus" :size=size @change="changeCurrentStatus">
-          <!--TODO v-for v-if不要一起用，先搁置-->
-          <!--TOOD 希望增加一个filter，使radio group只能向前选择，之前的radio disabled-->
-          <el-radio-button v-for="(value, index) in this.radioStatusList" :key="index"
-                           :label="value" v-if="index < 4"></el-radio-button>
-        </el-radio-group>
+        <span>{{this.averageRate}}</span>
+        <el-rate
+          v-model="rateValue"
+          @change="changeCurrentRate"
+          :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
+          style="margin-bottom: 50px"
+          :texts="['失望', '较差', '一般', '良好', '满意']"
+          show-text>
+        </el-rate>
       </div>
+
+      <el-radio-group v-model="radioStatus" :size=size @change="changeCurrentStatus">
+        <!--TODO v-for v-if不要一起用，先搁置-->
+        <!--TOOD 希望增加一个filter，使radio group只能向前选择，之前的radio disabled-->
+        <el-radio-button v-for="(value, index) in this.radioStatusList" :key="index"
+                         :label="value" v-if="index < 4"></el-radio-button>
+      </el-radio-group>
+
       <div slot="footer" class="dialog-footer">
         <el-button :size="size" @click.native="statusDialogVisible = false">{{$t('action.cancel')}}</el-button>
-        <el-button :size="size" type="primary" @click.native="setCurrentStatus">{{$t('action.confirm')}}</el-button>
+        <el-button :size="size" type="primary" @click.native="setSubjectInfo">{{$t('action.confirm')}}</el-button>
       </div>
     </el-dialog>
   </div>
@@ -437,6 +448,7 @@
         imageDialogVisible: false,
 
         selectedExpId: null, // 选择报名情况的实验
+        selectedSubjectId: null,
 
         columns: [  // 报名情况列
           {prop:"name", label:"用户名", minWidth:100},
@@ -451,6 +463,11 @@
         radioStatus: "",
         currentStatusIndex: 0,
         selectedExpUserId: null,  // 选择报名情况的被试
+
+        rateValue: null, // 评分默认值
+        currentRate: null,
+        selectedRateRecord: null,
+        averageRate: null  // 平均评分
       }
     },
     methods: {
@@ -546,9 +563,9 @@
       },
       // 显示报名情况
       handleCheckRegistration: function (params) {
-        this.registDialogVisible = true
         this.selectedExpId = params.id
         this.findPeoPage(null)
+        this.registDialogVisible = true
       },
       // 删除报名的被试
       handlePeoDelete: function (data) {
@@ -556,15 +573,22 @@
       },
       // 编辑报名的被试
       handlePeoEdit: function (data) {
-        this.statusDialogVisible = true
         this.selectedExpUserId = data.row.id  // 被试报名情况中，被试列表的id存储的是expUserId，而不是userId
         this.$api.exp.findExpUserById({id: data.row.id}).then((res) => {  // 防止再次打开编辑时未刷新状态
           this.radioStatus = this.getStatusText(res.data.status)
+          this.currentStatusIndex = res.data.status
+          this.selectedSubjectId = res.data.userId
+          this.$api.rate.findRateByExpIdAndRatedId({expId: res.data.expId, ratedId: res.data.userId}).then((res) => {
+            this.rateValue = res.data ? res.data.rate : null
+            this.currentRate = this.rateValue
+            this.selectedRateRecord = res.data
+          })
+          this.getAverageRate(res.data.userId)
         })
+        this.statusDialogVisible = true
       },
       changeCurrentStatus: function(value) {
         this.currentStatusIndex = this.getStatusIndex(value)
-
       },
       setCurrentStatus: function() {
         let params = {
@@ -580,6 +604,50 @@
         })
         this.statusDialogVisible = false
         // this.$api.exp.saveExpUser({id: this.selectedExpUserId, status: this.currentStatusIndex})
+      },
+      changeCurrentRate: function(value) {
+        this.currentRate = value
+      },
+      setCurrentRate: function() {
+        if(this.selectedRateRecord) {
+          this.selectedRateRecord.rate = this.currentRate
+          this.$api.rate.save(this.selectedRateRecord).then((res) => {
+            if(res.code == 200) {
+              this.$message({ message: '操作成功', type: 'success' })
+            } else {
+              this.$message({message: '操作失败, ' + res.msg, type: 'error'})
+            }
+          })
+        }
+        else {
+          let params = {
+            expId: this.selectedExpId,
+            ratedId: this.selectedSubjectId,
+            rate: this.currentRate
+          }
+          this.$api.rate.save(params).then((res) => {
+            if(res.code == 200) {
+              this.$message({ message: '操作成功', type: 'success' })
+            } else {
+              this.$message({message: '操作失败, ' + res.msg, type: 'error'})
+            }
+          })
+        }
+      },
+      getAverageRate: function(ratedId) {
+        this.$api.rate.findAllRateByRatedId({ratedId: ratedId}).then((res) => {
+          let size = res.data.length
+          var totalRate = 0
+          for(var i = 0; i < size; ++i) {
+            totalRate += res.data[i].rate
+          }
+          this.averageRate = size > 0 ? (totalRate / size) : 0
+        })
+      },
+      setSubjectInfo: function() {
+        this.setCurrentStatus()
+        this.setCurrentRate()
+        this.statusDialogVisible = false
       },
       dataFormFormat(exp) {
         this.dataForm.id = exp.id
