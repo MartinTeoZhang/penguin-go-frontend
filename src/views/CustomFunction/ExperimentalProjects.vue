@@ -17,6 +17,7 @@
         </el-form-item>
       </el-form>
     </div>
+<<<<<<< HEAD
     <!--报名参加界面-->
 
     <el-dialog :title="'报名'" width="30%" :visible.sync="dialogVisible" :close-on-click-modal="false">
@@ -45,6 +46,11 @@
     <!--展示实验项目-->
     <div class="cards" >
       <el-card shadow="hover" class="box-card" v-for="(re, index) in pageResult.content" :key="index" @click.native="clickCard(re, index)">
+=======
+    <div class="cards" >
+      <!-- Card卡片 -->
+      <!-- <el-card shadow="hover" class="box-card">
+>>>>>>> fec003adeabd819a07c5bb725cb8965182788903
         <div slot="header" class="clearfix">
           <span>{{re.name}}</span>
           <span style="float: right; color: red" type="text">{{payToStr(re.payment)}}元</span>
@@ -57,6 +63,32 @@
           <el-col :span="9">
             <div class="text item">
               人数：{{expUserCount[index]}}/{{re.peopleNum}}人
+            </div>
+            <div class="text item">
+              时长：{{re.duration}}分钟
+            </div>
+            <div class="text item">
+              类型：
+              <span v-for="(type,index) in strToArray(re.types)" :key="index">
+                  {{type}};
+                </span>
+            </div>
+          </el-col>
+        </el-row>
+      </el-card> -->
+      <el-card shadow="hover" class="box-card" v-for="(re, index) in pageResult.content" :key="index">
+        <div slot="header" class="clearfix">
+          <span>{{re.name}}</span>
+          <sapn style="float: right; color: red" type="text">{{getPaymentMin(re.payment)}}~{{getPaymentMax(re.payment)}}元</sapn>
+        </div>
+        <el-row :gutter="20">
+          <el-col :span="11">
+            <img height="100" width="200"
+                 src="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png" class="image">
+          </el-col>
+          <el-col :span="9">
+            <div class="text item">
+              人数：{{re.peopleNum}}人
             </div>
             <div class="text item">
               时长：{{re.duration}}分钟
@@ -105,6 +137,7 @@
         },
         pageRequest: { pageNum: 1, pageSize: 10 },
         pageResult: {},
+<<<<<<< HEAD
         dialogVisible: false, // 报名参加界面是否显示
         editLoading: false,
         clickedExp: { //被点击的实验
@@ -117,6 +150,8 @@
         },
         userId: 0,
         expUserCount: [], //实验报名人数
+=======
+>>>>>>> fec003adeabd819a07c5bb725cb8965182788903
       };
     },
     mounted(){
@@ -131,10 +166,18 @@
         this.pageRequest.columnFilters = {status: {name:'status', value:'2'}}
         this.$api.exp.findPage(this.pageRequest).then((res) => {
           this.pageResult = res.data
+<<<<<<< HEAD
           this.expUserCount = []
           this.getExpUserCount()
         })
       },
+=======
+        })
+      },
+      handleAdd: function () {
+
+      },
+>>>>>>> fec003adeabd819a07c5bb725cb8965182788903
       strToJson: function(str){
         var n = str.replace(/\\'/g,"\"")
         return JSON.parse(n)
@@ -144,6 +187,7 @@
         str = str.substring(1,str.length-1);
         return str.split(",");
       },
+<<<<<<< HEAD
       payToStr: function(pay){
         let p = this.strToJson(pay)
         return p.paymentMin + '~' + p.paymentMax
@@ -164,12 +208,20 @@
         this.$api.exp.getExpUserCount(request).then((res) => {
           this.expUserCount.splice(this.clickedExpIndex, 1, res.data)
         })
+=======
+      getPaymentMin: function(payment){
+        return this.strToJson(payment).paymentMin
+      },
+      getPaymentMax: function(payment){
+        return this.strToJson(payment).paymentMax
+>>>>>>> fec003adeabd819a07c5bb725cb8965182788903
       },
       // 换页刷新
       refreshPageRequest: function (pageNum) {
         this.pageRequest.pageNum = pageNum
         this.findPage(null)
       },
+<<<<<<< HEAD
       submitForm: function () {
         this.$confirm('确认提交吗？', '提示', {}).then(() => {
           if(this.isFull()){
@@ -268,6 +320,8 @@
         }
         return timeArr
       }
+=======
+>>>>>>> fec003adeabd819a07c5bb725cb8965182788903
     }
   }
 </script>
@@ -296,9 +350,12 @@
     height: 200px;
     text-align: left;
   }
+<<<<<<< HEAD
 
   .el-dialog {
     text-align: left;
   }
+=======
+>>>>>>> fec003adeabd819a07c5bb725cb8965182788903
 
 </style>
