@@ -207,7 +207,6 @@
           requirements: null,
           note: '',
         },
-        userId: 0,
         expUserCount: [], //实验报名人数
         expimg: '',
       };
@@ -271,18 +270,7 @@
             return
           }
           this.editLoading = true
-          if(this.userId == 0 || this.userId == null){
-            //通过userName获得userId
-            let userName = sessionStorage.getItem('user')
-            var request = { pageNum: 1, pageSize: 10 }
-            request.columnFilters = {name: {name:'name', value: userName}}
-            this.$api.user.findPage(request).then((res) => {
-              this.userId = res.data.content[0].id
-              this.verifyRepeatedEnrollment()
-            })
-          }else{
-            this.verifyRepeatedEnrollment()
-          }
+          this.verifyRepeatedEnrollment()
         })
       },
       clickCard: function(row, column, event){
@@ -292,16 +280,16 @@
       },
       saveSubject: function(){
         let userName = sessionStorage.getItem('user')
-        let create_time = format(new Date())
+        let create_time = new Date()
         let expUser = {
           id: null,
           expId: this.clickedExp.id,
-          userId: this.userId,
+          userId: null,
           status: 0,
-          create_by: userName,
-          create_time: create_time,
-          last_update_by: null,
-          last_update_time: null
+          createBy: userName,
+          createTime: create_time,
+          lastUpdateBy: null,
+          lastUpdateTime: null
         }
         this.$api.exp.saveExpUser(expUser).then((res) => {
           this.editLoading = false
@@ -316,16 +304,14 @@
       },
       //验证重复报名
       verifyRepeatedEnrollment : function(){
-        let request = {expId: this.clickedExp.id}
+        let userName = sessionStorage.getItem('user')
+        let request = {expId: this.clickedExp.id, userName: userName}
         this.$api.exp.findExpUsers(request).then((res) => {
-          for (var i = res.data.length - 1; i >= 0; i--) {
-            if(res.data[i].userId == this.userId){
-              this.editLoading = false
-              this.$message({message: '无法重复报名', type: 'warning'})
-              return
-            }
-          }
-          this.saveSubject()
+          if(res.data.length > 0){
+            this.editLoading = false
+            this.$message({message: '无法重复报名', type: 'warning'})
+          }else
+            this.saveSubject()
         })
       },
       //判断报名人数是否满了
