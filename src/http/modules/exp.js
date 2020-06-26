@@ -120,3 +120,12 @@ export const getExpUserCount = (params) => {
     params
   })
 }
+
+// 根据实验状态查询
+export const findPageByStatus = (data) => {
+  return axios({
+    url: '/funExp/findPageByStatus',
+    method: 'post',
+    data
+  })
+}
