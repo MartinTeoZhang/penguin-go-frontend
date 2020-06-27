@@ -32,7 +32,9 @@
     "stopPublishing": "Stop Publishing",
     "checkRegistration": "Check Registration",
     "cancelRegistration": "Cancel Registration",
-    "viewDetail": "View Detail"
+    "viewDetail": "View Detail",
+    "viewProgress": "View Progress",
+    "rateExper": "Rate Experimenter"
   },
   "sys": {
     "sysMng": "System Manage",

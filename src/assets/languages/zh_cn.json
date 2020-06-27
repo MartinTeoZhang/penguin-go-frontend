@@ -32,7 +32,9 @@
     "stopPublishing": "停止发布",
     "checkRegistration": "查看报名情况",
     "cancelRegistration": "取消报名",
-    "viewDetail": "查看详情"
+    "viewDetail": "查看详情",
+    "viewProgress": "查看进度",
+    "rateExper": "评价主试"
   },
   "sys": {
     "sysMng": "系统管理",

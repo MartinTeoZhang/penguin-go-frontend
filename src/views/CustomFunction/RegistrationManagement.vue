@@ -36,6 +36,10 @@
           </div>
         </div>
         <el-row class="card-button">
+          <kt-button icon="el-icon-star-off" :label="$t('action.rateExper')" type="text"
+                     style="color: #99A9BF" perms="fun:subject:rate" @click="handleRate(index)"></kt-button>
+          <kt-button icon="el-icon-s-check" :label="$t('action.viewProgress')" type="text"
+                     style="color: #E6A23C" perms="fun:subject:viewexp" @click="handleProgress(index)"></kt-button>
           <kt-button icon="el-icon-user" :label="$t('action.viewDetail')" type="text"
                      style="color: #409EFF" perms="fun:subject:viewexp" @click="handleView(exp)"></kt-button>
           <kt-button icon="el-icon-delete" :label="$t('action.cancelRegistration')" type="text"
@@ -201,6 +205,32 @@
       </el-form>
     </el-dialog>
 
+    <!--被试报名状态查看-->
+    <el-dialog title="查看被试报名状态" :visible.sync="statusDialogVisible">
+      <el-radio-group v-model="radioStatus" :size=size>
+        <!--TODO v-for v-if不要一起用，先搁置-->
+        <!--TOOD 希望增加一个filter，使radio group只能向前选择，之前的radio disabled-->
+        <el-radio-button v-for="(value, index) in this.radioStatusList" :key="index"
+                         :label="value" v-if="index < 4" disabled></el-radio-button>
+      </el-radio-group>
+    </el-dialog>
+
+    <el-dialog title="评价主试" :visible.sync="rateDialogVisible">
+      <div>
+        <span>{{this.averageRate}}</span>
+        <el-rate
+          v-model="rateValue"
+          @change="changeCurrentRate"
+          :colors="['#99A9BF', '#F7BA2A', '#FF9900']"
+          :texts="['失望', '较差', '一般', '良好', '满意']"
+          show-text>
+        </el-rate>
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button :size="size" @click.native="rateDialogVisible = false">{{$t('action.cancel')}}</el-button>
+        <el-button :size="size" type="primary" @click.native="setCurrentRate">{{$t('action.confirm')}}</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -359,6 +389,17 @@
         dialogImageUrl: '',
         imageDialogVisible: false,
 
+        statusDialogVisible: false,
+        radioStatusList: ["未处理", "已预约", "进行中", "已结束", "已取消", "未知"],
+        radioStatus: "",
+
+        rateDialogVisible: false,
+        selectedExpId: null,
+        selectedExperId: null,
+        rateValue: null, // 评分默认值
+        currentRate: null,
+        selectedRateRecord: null,
+        averageRate: null  // 平均评分
       }
     },
     methods: {
@@ -370,7 +411,7 @@
         this.pageRequest.columnFilters = {
           userName: {userName:'userName', value:sessionStorage.getItem("user")},
         }
-        this.$api.exp.findPageByUserName(this.pageRequest).then((res) => {
+        this.$api.exp.findSubjectPageByUserName(this.pageRequest).then((res) => {
           this.pageResult = res.data
           console.log(this.pageResult)
         }).then(data!=null?data.callback:'')
@@ -388,7 +429,7 @@
             expId: this.pageResult.content[index].id,
             createBy: sessionStorage.getItem("user")
           }
-          this.$api.exp.deletePeoByExpIdAndUserName(params).then( res => {
+          this.$api.exp.deletePeoByExpIdAndUserName(params).then((res) => {
             if(res.code == 200) {
               this.$message({message: '取消成功', type: 'success'})
               this.findPage(null)
@@ -404,6 +445,79 @@
         this.dataFormFormat(params)
         this.dialogVisible = true
         this.operation = false
+      },
+      // 显示报名状态界面
+      handleProgress: function (index) {
+        let params = {
+          expId: this.pageResult.content[index].id,
+          userName: sessionStorage.getItem("user")
+        }
+        this.$api.exp.findExpUserByExpIdAndUserName(params).then((res) => {
+          this.radioStatus = this.radioStatusList[res.data.status % this.radioStatusList.length]
+        })
+        this.statusDialogVisible = true
+      },
+      // 显示评价主试界面
+      handleRate: function (index) {
+        let params = {
+          expId: this.pageResult.content[index].id,
+        }
+        this.selectedExpId = this.pageResult.content[index].id
+        this.$api.exp.findUserExpByExpId(params).then((res) => {
+          console.log(res)
+          this.selectedExperId = res.data.userId
+          this.$api.rate.findRateByExpIdAndRatedId({expId: res.data.expId, ratedId: res.data.userId}).then((res) => {
+            this.rateValue = res.data ? res.data.rate : null
+            this.currentRate = this.rateValue
+            this.selectedRateRecord = res.data
+          })
+          this.getAverageRate(res.data.userId)
+        })
+        this.rateDialogVisible = true
+      },
+      changeCurrentRate: function(value) {
+        this.currentRate = value
+      },
+      setCurrentRate: function() {
+        if(this.selectedRateRecord) {
+          this.selectedRateRecord.rate = this.currentRate
+          this.$api.rate.save(this.selectedRateRecord).then((res) => {
+            if(res.code == 200) {
+              this.$message({ message: '操作成功', type: 'success' })
+            } else {
+              this.$message({message: '操作失败, ' + res.msg, type: 'error'})
+            }
+          })
+        }
+        else {
+          let params = {
+            expId: this.selectedExpId,
+            ratedId: this.selectedExperId,
+            rate: this.currentRate
+          }
+          this.$api.rate.save(params).then((res) => {
+            if(res.code == 200) {
+              this.$message({ message: '操作成功', type: 'success' })
+            } else {
+              this.$message({message: '操作失败, ' + res.msg, type: 'error'})
+            }
+          })
+        }
+        this.rateDialogVisible = false
+      },
+      getAverageRate: function(ratedId) {
+        this.$api.rate.findAllRateByRatedId({ratedId: ratedId}).then((res) => {
+          let size = res.data.length
+          var totalRate = 0
+          for(var i = 0; i < size; ++i) {
+            totalRate += res.data[i].rate
+          }
+          this.averageRate = size > 0 ? (totalRate / size) : 0
+        })
+      },
+      setSubjectInfo: function() {
+        this.setCurrentStatus()
+        this.setCurrentRate()
       },
       dataFormFormat(exp) {
         this.dataForm.id = exp.id
