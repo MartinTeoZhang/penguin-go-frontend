@@ -325,7 +325,9 @@
           if(data !== null) {
             this.pageRequest = data.pageRequest
           }
-          this.pageRequest.columnFilters = {name: {name:'name', value:sessionStorage.getItem("user")}}
+          this.pageRequest.columnFilters = {
+            userName: {userName:'userName', value:sessionStorage.getItem("user")}
+          };
           this.$api.exp.findPage(this.pageRequest).then((res) => {
             this.pageResult = this.columnFilter(res.data);
             console.log(this.pageResult);
