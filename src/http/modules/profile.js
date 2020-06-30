@@ -29,3 +29,32 @@ export const getExpStatData = (params) => {
   })
 };
 
+//头像上传
+export const uploadAvatar = (data) => {
+  return axios({
+    url: '/sysAvatar/upload',
+    method: 'post',
+    headers:{
+      'Content-Type': 'multipart/form-data'
+    },
+    data
+  })
+};
+
+//根据userId查询头像
+export const getAvatarByUserId = (params) => {
+  return axios({
+    url: '/sysAvatar/getAvatarByUserId',
+    method: 'get',
+    params
+  })
+};
+
+//根据用户名查询头像
+export const getAvatarByUserName = (params) =>{
+  return axios({
+    url: '/sysAvatar/getAvatarByUserName',
+    method: 'get',
+    params
+  })
+};

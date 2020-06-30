@@ -54,7 +54,7 @@
           <!-- 用户信息 -->
           <span class="user-info"><img :src="user.avatar" />{{user.name}}</span>
           <el-popover ref="popover-personal" placement="bottom-end" trigger="click" :visible-arrow="false">
-            <personal-panel :user="user"></personal-panel>
+            <personal-panel :user="user" ></personal-panel>
           </el-popover>
         </el-menu-item>
       </el-menu>
@@ -72,6 +72,7 @@
   import NoticePanel from "@/views/Core/NoticePanel"
   import MessagePanel from "@/views/Core/MessagePanel"
   import PersonalPanel from "@/views/Core/PersonalPanel"
+  import { baseUrl } from '@/utils/global'
 
   export default {
     components:{
@@ -117,14 +118,40 @@
         lang = lang === '' ? 'zh_cn' : lang
         this.$i18n.locale = lang
         this.langVisible = false
-      }
+      },
+
+      //加载头像
+      loadAvatar(){
+        this.$api.profile.getAvatarByUserName({name:sessionStorage.getItem("user")}).then((res)=>{
+          if (res.msg === "no record"){
+            //没有检查到头像，加载默认头像
+            this.user.avatar = require("@/assets/user.png");
+          }else{
+            this.user.avatar = baseUrl +'/'+ res.data.path;
+          }
+        })
+      },
+
+      //加载个人基本信息
+      loadBasicInfo(){
+        this.$api.profile.getBasicInfo({name :sessionStorage.getItem("user")}).then((res)=>{
+          this.user.role = res.data.roleNames;
+          console.log(this.user.role);
+        })
+      },
+      
     },
+
+
+
     mounted() {
       this.sysName = "主被试助手";
       var user = sessionStorage.getItem("user");
       if (user) {
         this.user.name = user;
-        this.user.avatar = require("@/assets/user.png");
+        //this.user.avatar = require("@/assets/user.png");
+        this.loadAvatar();
+        this.loadBasicInfo();
       }
     },
     computed:{

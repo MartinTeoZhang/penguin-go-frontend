@@ -31,7 +31,7 @@
     </el-row>
 <!--    信息展示-->
     <el-row>
-      <el-tabs v-model="activeName" @tab-click="handleClick">
+      <el-tabs v-model="activeName">
         <el-tab-pane label="实验统计" name="first">
           <el-row style="font-family: 'Helvetica Neue',Helvetica,'PingFang SC',sans-serif;
            font-weight: bold">
@@ -120,19 +120,35 @@
     <el-dialog
       title="更换头像"
       :visible.sync="avatarDialogVisible"
-      width="30%"
-      :before-close="handleClose">
-      <div>
-        <el-upload
-          class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :show-file-list="false"
-          :on-success="handleAvatarSuccess"
-          :before-upload="beforeAvatarUpload">
-          <img v-if="imageUrl" :src="imageUrl" alt="avatar" class="avatar">
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-        </el-upload>
-      </div>
+      width="30%">
+      <el-form :model="form">
+        <el-form-item :label-width="formLabelWidth"
+                      ref="uploadElement">
+          <el-upload ref="upload"
+                     action="#"
+                     accept="image/png,image/gif,image/jpg,image/jpeg"
+                     list-type="picture-card"
+                     :limit="1"
+                     :auto-upload="false"
+                     :before-upload="beforeAvatarUpload"
+                     :on-preview="handlePictureCardPreview"
+                     :on-remove="handleRemove"
+                     :on-change="imgChange"
+                     :class="{hide:hideUpload}">
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible">
+            <img width="100%"
+                 :src="dialogImageUrl"
+                 alt="">
+          </el-dialog>
+        </el-form-item>
+        <el-form-item>
+          <el-button size="small"
+                     type="primary"
+                     @click="uploadFile">立即上传</el-button>
+        </el-form-item>
+      </el-form>
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="avatarDialogVisible = false">取 消</el-button>
@@ -202,7 +218,8 @@
   import KtTable from "@/views/Core/KtTable"
   import KtButton from "@/views/Core/KtButton"
   import TableColumnFilterDialog from "@/views/Core/TableColumnFilterDialog"
-    import api from "../../http/api";
+  import { baseUrl } from '@/utils/global'
+  import api from "../../http/api";
 
     export default {
       components:{
@@ -220,6 +237,12 @@
           email_button_disable:"true",
           account_type: "未知",
           circleUrl: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
+          hideUpload: false,
+          dialogImageUrl: '',
+          dialogVisible: false,//图片预览弹窗
+          formLabelWidth: '80px',
+          limitNum: 1,
+          form: {},
           imageUrl: '',
           sizeList: ["large", "medium", "small"],
           avatarDialogVisible: false,
@@ -249,51 +272,60 @@
             roleNames: "未知",
             userRoles: []
           },
-          tableData: [{
-            date: '2016-05-02',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }, {
-            date: '2016-05-04',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1517 弄'
-          }, {
-            date: '2016-05-01',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1519 弄'
-          }, {
-            date: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1516 弄'
-          }]
         }
       },
       methods:{
-        handleClose(done) {
-          this.$confirm('取消更换头像？')
-            .then(_ => {
-              done();
-            })
-            .catch(_ => {});
-        },
+        //成功获取头像连接
         handleAvatarSuccess(res, file) {
           this.imageUrl = URL.createObjectURL(file.raw);
         },
+        //头像上传前检查
         beforeAvatarUpload(file) {
-          const isJPG = file.type === 'image/jpeg';
-          const isLt2M = file.size / 1024 / 1024 < 2;
+          if (!(file.type === 'image/png' || file.type === 'image/gif' || file.type === 'image/jpg' || file.type === 'image/jpeg')) {
+            this.$notify.warning({
+              title: '警告',
+              message: '请上传格式为image/png, image/gif, image/jpg, image/jpeg的图片'
+            })
+          }
+          let size = file.size / 1024 / 1024 / 2
+          if (size > 2) {
+            this.$notify.warning({
+              title: '警告',
+              message: '图片大小必须小于2M'
+            })
+          }
+          let fd = new FormData();//通过form数据格式来传
+          fd.append("myphoto", file); //传文件
+          fd.append("id" , this.dataForm.id); //用户id
 
-          if (!isJPG) {
-            this.$message.error('上传头像图片只能是 JPG 格式!');
-          }
-          if (!isLt2M) {
-            this.$message.error('上传头像图片大小不能超过 2MB!');
-          }
-          return isJPG && isLt2M;
+          this.$api.profile.uploadAvatar(fd).then((res)=>{
+            this.circleUrl=baseUrl+'/'+res.data.path;
+            this.$message({ message: '头像上传成功', type: 'success' });
+            location. reload()
+          })
         },
 
-        handleClick(tab, event) {
-          console.log(tab, event);
+
+        // 文件列表移除文件时的钩子
+        handleRemove (file, fileList) {
+          this.hideUpload = fileList.length >= this.limitNum;
+
+        },
+        // 点击文件列表中已上传的文件时的钩子
+        handlePictureCardPreview (file) {
+          this.dialogImageUrl = file.url;
+          this.dialogVisible = true;
+        },
+
+        uploadFile () {
+          this.$refs.upload.submit()
+
+        },
+        imgChange (files, fileList) {
+          this.hideUpload = fileList.length >= this.limitNum;
+          if (fileList) {
+            this.$refs.uploadElement.clearValidate();
+          }
         },
 
         //加载个人基本信息
@@ -305,6 +337,21 @@
             this.email_change_input = res.data.email;
             this.phone_change_input = res.data.mobile;
             this.loadExpermentData();
+            this.loadAvatar();
+          })
+
+        },
+
+        //加载头像
+        loadAvatar(){
+          this.$api.profile.getAvatarByUserName({name:this.dataForm.name}).then((res)=>{
+            if (res.msg === "no record"){
+              //没有检查到头像，加载默认头像
+              this.circleUrl = "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png";
+            }else{
+              this.circleUrl = baseUrl +'/'+ res.data.path;
+            }
+
           })
         },
 
@@ -452,6 +499,9 @@
 </script>
 
 <style scoped>
+  .hide .el-upload--picture-card {
+    display: none;
+  }
 
   .el-row {
     margin-bottom: 20px;
